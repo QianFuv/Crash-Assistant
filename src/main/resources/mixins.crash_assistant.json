@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "mixins.crash_assistant.refmap.json",
   "client": [
+    "MixinCrashReport"
   ],
   "injectors": {
     "defaultRequire": 1,
