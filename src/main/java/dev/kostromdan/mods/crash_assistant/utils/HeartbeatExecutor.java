@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class HeartbeatExecutor {
-    private static final Path HEARTBEAT_FILE = Paths.get("local", "crash_assistant", "heartbeat.tmp");
+    public static final Path HEARTBEAT_FILE = Paths.get("local", "crash_assistant", "heartbeat.tmp");
     private static ScheduledExecutorService heartbeatExecutor = null;
 
 

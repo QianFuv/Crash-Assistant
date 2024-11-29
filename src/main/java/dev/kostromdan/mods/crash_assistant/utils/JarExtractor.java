@@ -20,6 +20,7 @@ public interface JarExtractor {
 
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
                     "java", "-jar", extractedJarPath.toAbsolutePath().toString(),
+                    "-heartbeatFile", '"' + HeartbeatExecutor.HEARTBEAT_FILE.toAbsolutePath().toString() + '"',
                     "-Xmx1024m"
             );
             crashAssistantAppProcess.start();
