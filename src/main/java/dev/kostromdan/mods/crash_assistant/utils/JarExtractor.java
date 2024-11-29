@@ -9,18 +9,19 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public interface JarExtractor {
 
     static void launchCrashAssistantApp() {
         try {
-            HeartbeatExecutor.startHeartbeat();
+            Files.deleteIfExists(Paths.get("local", "crash_assistant", "crashed.tmp"));
 
             Path extractedJarPath = extractCrashAssistantApp();
 
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
                     "java", "-jar", extractedJarPath.toAbsolutePath().toString(),
-                    "-heartbeatFile", '"' + HeartbeatExecutor.HEARTBEAT_FILE.toAbsolutePath().toString() + '"',
+                    "-parentPID", Objects.toString(PIDHelper.getCurrentProcessID()),
                     "-Xmx1024m"
             );
             crashAssistantAppProcess.start();

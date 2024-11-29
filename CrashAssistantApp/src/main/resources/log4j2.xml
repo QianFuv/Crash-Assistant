@@ -1,41 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-    <Properties>
-        <!-- Ensure English locale for date formatting -->
-        <Property name="log4j2.locale">en</Property>
-    </Properties>
-
     <Appenders>
-        <!-- Console output configuration -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout>
                 <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%logger{36}]: %msg%n</Pattern>
             </PatternLayout>
         </Console>
 
-        <!-- Rolling File configuration -->
         <RollingFile name="FileLogger" fileName="local/crash_assistant/logs/latest.log"
-                     filePattern="local/crash_assistant/logs/crash_assistant_app_%d{yyyy-MM-dd_HH-mm-ss}.log">
+                     filePattern="local/crash_assistant/logs/crash_assistant_app_%d{yyyy-MM-dd_HH-mm-ss}.log.gz">
             <PatternLayout>
                 <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%logger{36}]: %msg%n</Pattern>
             </PatternLayout>
             <Policies>
-                <!-- Trigger based on size (10MB in this case) -->
+                <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
-            <!-- This will keep a maximum of 30 old log files -->
             <DefaultRolloverStrategy max="30"/>
         </RollingFile>
     </Appenders>
 
     <Loggers>
-        <!-- Specific logger for crash_assistant -->
         <Logger name="crash_assistant" level="info" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileLogger"/>
         </Logger>
 
-        <!-- Root logger for all other logs -->
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileLogger"/>
