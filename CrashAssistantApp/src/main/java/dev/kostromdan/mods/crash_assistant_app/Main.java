@@ -2,18 +2,17 @@ package dev.kostromdan.mods.crash_assistant_app;
 
 import dev.kostromdan.mods.crash_assistant_app.forms.BookEditorExample;
 import dev.kostromdan.mods.crash_assistant_app.forms.SaveButtonListener;
+import dev.kostromdan.mods.crash_assistant_app.utils.CrashReportsHelper;
 import dev.kostromdan.mods.crash_assistant_app.utils.PIDHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    private static final Logger LOGGER = LogManager.getLogger(Main.class);
+    public static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -29,17 +28,23 @@ public class Main {
             }
         }
 
+        CrashReportsHelper.cacheKnownCrashReports();
+
         while (true) {
             try {
-                if (!PIDHelper.isProcessAlive(parentPID))  {
+                if (!PIDHelper.isProcessAlive(parentPID)) {
                     LOGGER.info("PID \"{}\" is not alive. Minecraft JVM appears to have stopped.", parentPID);
                     startApp();
                     return;
-                } else if (Files.exists(Paths.get("local", "crash_assistant", "crashed.tmp"))){
-                    LOGGER.info("Found \"crashed.tmp\". Minecraft appears to have crashed.");
+                }
+
+                Path newCrashReport = CrashReportsHelper.scanForNewCrashReports();
+                if (newCrashReport != null) {
+                    LOGGER.info("New crash-report detected: " + newCrashReport.getFileName().toString());
                     startApp();
                     return;
                 }
+
                 TimeUnit.SECONDS.sleep(1);
 
             } catch (Exception e) {
