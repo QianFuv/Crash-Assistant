@@ -1,9 +1,9 @@
-package dev.kostromdan.mods.crash_assistant.core;
+package dev.kostromdan.mods.crash_assistant.core_mod.services;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.ITransformer;
-import dev.kostromdan.mods.crash_assistant.utils.JarExtractor;
+import dev.kostromdan.mods.crash_assistant.core_mod.utils.JarExtractor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

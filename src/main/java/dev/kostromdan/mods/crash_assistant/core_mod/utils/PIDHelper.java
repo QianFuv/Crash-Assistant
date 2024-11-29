@@ -1,4 +1,4 @@
-package dev.kostromdan.mods.crash_assistant.utils;
+package dev.kostromdan.mods.crash_assistant.core_mod.utils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;

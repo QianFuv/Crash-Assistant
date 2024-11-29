@@ -1,6 +1,6 @@
-package dev.kostromdan.mods.crash_assistant.utils;
+package dev.kostromdan.mods.crash_assistant.core_mod.utils;
 
-import dev.kostromdan.mods.crash_assistant.core.CrashAssistantTransformationService;
+import dev.kostromdan.mods.crash_assistant.core_mod.services.CrashAssistantTransformationService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,9 +15,7 @@ public interface JarExtractor {
 
     static void launchCrashAssistantApp() {
         try {
-            Files.deleteIfExists(Paths.get("local", "crash_assistant", "crashed.tmp"));
-
-            Path extractedJarPath = extractCrashAssistantApp();
+            Path extractedJarPath = extractFromCoreMod("CrashAssistantApp.jar");
 
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
                     "java", "-jar", extractedJarPath.toAbsolutePath().toString(),
@@ -31,21 +29,20 @@ public interface JarExtractor {
         }
     }
 
-    static Path extractCrashAssistantApp() throws IOException {
-        String EMBEDDED_JAR_NAME = "CrashAssistantApp.jar";
-
+    static Path extractFromCoreMod(String jarInJarName) throws IOException {
         Path outputDirectory = Paths.get("local", "crash_assistant");
         if (!Files.exists(outputDirectory)) {
             Files.createDirectories(outputDirectory);
         }
 
-        Path extractedJarPath = outputDirectory.resolve(EMBEDDED_JAR_NAME);
+        Path extractedJarPath = outputDirectory.resolve(jarInJarName);
 
         Files.deleteIfExists(extractedJarPath);
 
-        InputStream jarStream = CrashAssistantTransformationService.class.getResourceAsStream("/" + EMBEDDED_JAR_NAME);
+        InputStream jarStream = CrashAssistantTransformationService.class.getResourceAsStream("/META-INF/jarjar/" + jarInJarName);
+
         if (jarStream == null) {
-            throw new FileNotFoundException("Could not find embedded JAR: " + EMBEDDED_JAR_NAME);
+            throw new FileNotFoundException("Could not find embedded JAR: " + jarInJarName);
         }
 
         try (OutputStream out = Files.newOutputStream(extractedJarPath)) {
