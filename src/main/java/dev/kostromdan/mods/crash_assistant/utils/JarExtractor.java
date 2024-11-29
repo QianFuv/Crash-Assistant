@@ -1,6 +1,6 @@
 package dev.kostromdan.mods.crash_assistant.utils;
 
-import dev.kostromdan.mods.crash_assistant.CrashAssistant;
+import dev.kostromdan.mods.crash_assistant.core.CrashAssistantTransformationService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public interface JarExtractor {
             crashAssistantAppProcess.start();
 
         } catch (Exception e) {
-            CrashAssistant.LOGGER.error("Error while launching GUI: ", e);
+            CrashAssistantTransformationService.LOGGER.error("Error while launching GUI: ", e);
         }
     }
 
@@ -43,7 +43,7 @@ public interface JarExtractor {
 
         Files.deleteIfExists(extractedJarPath);
 
-        InputStream jarStream = CrashAssistant.class.getResourceAsStream("/" + EMBEDDED_JAR_NAME);
+        InputStream jarStream = CrashAssistantTransformationService.class.getResourceAsStream("/" + EMBEDDED_JAR_NAME);
         if (jarStream == null) {
             throw new FileNotFoundException("Could not find embedded JAR: " + EMBEDDED_JAR_NAME);
         }
