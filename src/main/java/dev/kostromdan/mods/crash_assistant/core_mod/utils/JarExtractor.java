@@ -14,6 +14,8 @@ import java.nio.file.*;
 import java.util.Map;
 import java.util.Objects;
 
+import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
+
 public interface JarExtractor {
 
     static void launchCrashAssistantApp() {
@@ -61,5 +63,13 @@ public interface JarExtractor {
         }
 
         return extractedJarPath;
+    }
+
+    static Path getFromCoreMod(String jarInJarName) throws IOException, URISyntaxException {
+        Path pathInModFile = Path.of(CrashAssistantTransformationService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("META-INF/jarjar/"+jarInJarName);
+        URI filePathUri = new URI("jij:" + pathInModFile.toAbsolutePath().toUri().getRawSchemeSpecificPart()).normalize();
+        Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
+        FileSystem zipFS = FileSystems.newFileSystem(filePathUri, outerFsArgs);
+        return zipFS.getPath("/");
     }
 }
