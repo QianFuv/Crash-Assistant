@@ -1,14 +1,17 @@
 package dev.kostromdan.mods.crash_assistant.core_mod.utils;
 
+import com.google.common.collect.ImmutableMap;
 import dev.kostromdan.mods.crash_assistant.core_mod.services.CrashAssistantTransformationService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.*;
+import java.util.Map;
 import java.util.Objects;
 
 public interface JarExtractor {
@@ -37,7 +40,11 @@ public interface JarExtractor {
 
         Path extractedJarPath = outputDirectory.resolve(jarInJarName);
 
-        Files.deleteIfExists(extractedJarPath);
+        try {
+            Files.deleteIfExists(extractedJarPath);
+        } catch (IOException e) {
+            CrashAssistantTransformationService.LOGGER.warn("Error while deleting App jar, seems like GUI from prev. launch is still running: ", e);
+        }
 
         InputStream jarStream = CrashAssistantTransformationService.class.getResourceAsStream("/META-INF/jarjar/" + jarInJarName);
 

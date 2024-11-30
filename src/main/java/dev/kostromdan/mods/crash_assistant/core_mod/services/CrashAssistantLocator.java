@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -16,18 +17,24 @@ public class CrashAssistantLocator extends AbstractJarFileModProvider implements
 
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
+        try{
         List<IModFile> mods = new ArrayList<>();
 
+        Path modPath = null;
         try {
-            JarExtractor.extractFromCoreMod("CrashAssistantMod.jar");
-        } catch (IOException e) {
-            LOGGER.error("Error while extracting crash_assistant_mod.jar", e);
+            modPath =  JarExtractor.extractFromCoreMod("CrashAssistantMod.jar");
+        } catch (Exception e) {
+            LOGGER.error("Error while extracting CrashAssistantMod.jar", e);
         }
-        IModFile modFile = createMod(Paths.get("local", "crash_assistant", "CrashAssistantMod.jar")).file();
+        IModFile modFile = createMod(modPath).file();
 
         mods.add(modFile);
 
         return mods;
+        } catch (Exception e) {
+            LOGGER.error("Error while scanMods: ", e);
+            return Collections.emptyList();
+        }
     }
 
     @Override
