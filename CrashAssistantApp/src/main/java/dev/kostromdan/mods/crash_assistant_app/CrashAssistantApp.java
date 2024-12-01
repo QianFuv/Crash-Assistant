@@ -1,7 +1,5 @@
 package dev.kostromdan.mods.crash_assistant_app;
 
-import dev.kostromdan.mods.crash_assistant_app.forms.BookEditorExample;
-import dev.kostromdan.mods.crash_assistant_app.forms.SaveButtonListener;
 import dev.kostromdan.mods.crash_assistant_app.utils.CrashReportsHelper;
 import dev.kostromdan.mods.crash_assistant_app.utils.PIDHelper;
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +9,8 @@ import javax.swing.*;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
-    public static final Logger LOGGER = LogManager.getLogger(Main.class);
+public class CrashAssistantApp {
+    public static final Logger LOGGER = LogManager.getLogger(CrashAssistantApp.class);
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -34,14 +32,14 @@ public class Main {
             try {
                 if (!PIDHelper.isProcessAlive(parentPID)) {
                     LOGGER.info("PID \"{}\" is not alive. Minecraft JVM appears to have stopped.", parentPID);
-                    startApp();
+                    onMinecraftFinished();
                     return;
                 }
 
                 Path newCrashReport = CrashReportsHelper.scanForNewCrashReports();
                 if (newCrashReport != null) {
                     LOGGER.info("New crash-report detected: " + newCrashReport.getFileName().toString());
-                    startApp();
+                    onMinecraftCrashed();
                     return;
                 }
 
@@ -54,23 +52,21 @@ public class Main {
         }
     }
 
-    public static void startApp() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                BookEditorExample bookEditorExample = new BookEditorExample();
-                bookEditorExample.setVisible(true);
+    private static void onMinecraftFinished() {
+        startApp();
+    }
 
-                bookEditorExample.setSaveButtonListener(new SaveButtonListener() {
-                    @Override
-                    public void onSaveClicked(Book book) {
-                        LOGGER.info("Entered Book Details:");
-                        LOGGER.info("Book Title: " + book.getName());
-                        LOGGER.info("Author: " + book.getAuthor().getName());
-                        LOGGER.info("Genre: " + book.getGenre());
-                        LOGGER.info("Is Unavailable: " + book.isTaken());
-                    }
-                });
-            }
-        });
+    private static void onMinecraftCrashed() {
+        startApp();
+    }
+
+
+    public static void startApp() {
+        JLabel aLabel = new JLabel("test");
+        JFrame frame = new JFrame("Crash Assistant");
+        frame.getContentPane().add(aLabel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 300);
+        frame.setVisible(true);
     }
 }

@@ -81,12 +81,13 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
+    dependsOn(':CrashAssistantApp:shadowJar', ':CrashAssistantMod:build')
 
-    from('CrashAssistantApp/target') {
+    from(project(':CrashAssistantApp').layout.buildDirectory.dir('libs')) {
         include 'CrashAssistantApp.jar'
         into 'META-INF/jarjar'
     }
-    from('CrashAssistantMod/build/libs') {
+    from(project(':CrashAssistantMod').layout.buildDirectory.dir('libs')) {
         include 'CrashAssistantMod.jar'
         into 'META-INF/jarjar'
     }

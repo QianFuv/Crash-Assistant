@@ -11,8 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CrashAssistantLocator extends AbstractJarFileModProvider implements IDependencyLocator {
-    public static final Logger LOGGER = LoggerFactory.getLogger("CrashAssistantLocator");
+
+/**
+ * Since forge doesn't load jar in jar mods from coremods, we should do it by ourselves.
+ */
+public class CrashAssistantDependencyLocator extends AbstractJarFileModProvider implements IDependencyLocator {
+    public static final Logger LOGGER = LoggerFactory.getLogger("CrashAssistantDependencyLocator");
 
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {

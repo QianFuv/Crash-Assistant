@@ -1,6 +1,6 @@
 package dev.kostromdan.mods.crash_assistant_app.utils;
 
-import dev.kostromdan.mods.crash_assistant_app.Main;
+import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -27,7 +27,7 @@ public class CrashReportsHelper {
                 }
             }
         } catch (IOException e) {
-            Main.LOGGER.error("Error while scanning crash reports: ", e);
+            CrashAssistantApp.LOGGER.error("Error while scanning crash reports: ", e);
         }
     }
 
@@ -47,7 +47,7 @@ public class CrashReportsHelper {
                 }
             }
         } catch (IOException e) {
-            Main.LOGGER.error("Error while scanning crash reports: ", e);
+            CrashAssistantApp.LOGGER.error("Error while scanning crash reports: ", e);
         }
         return null;
 

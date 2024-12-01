@@ -66,6 +66,7 @@ public interface JarExtractor {
     }
 
     static Path getFromCoreMod(String jarInJarName) throws IOException, URISyntaxException {
+        //Idea taken from org.sinytra.connector.locator.EmbeddedDependencies#getJarInJar
         Path pathInModFile = Path.of(CrashAssistantTransformationService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("META-INF/jarjar/"+jarInJarName);
         URI filePathUri = new URI("jij:" + pathInModFile.toAbsolutePath().toUri().getRawSchemeSpecificPart()).normalize();
         Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
