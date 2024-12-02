@@ -18,7 +18,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'dev.kostromdan.mods.crash_assistant_app.App'
+                'Main-Class': 'dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp'
         )
     }
 }

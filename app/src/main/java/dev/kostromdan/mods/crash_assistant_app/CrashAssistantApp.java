@@ -5,12 +5,11 @@ import dev.kostromdan.mods.crash_assistant_app.utils.PIDHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
-public class App {
-    public static final Logger LOGGER = LogManager.getLogger(App.class);
+public class CrashAssistantApp {
+    public static final Logger LOGGER = LogManager.getLogger(CrashAssistantApp.class);
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -62,11 +61,6 @@ public class App {
 
 
     public static void startApp() {
-        JFrame frame = new JFrame("Crash Assistant");
-        JLabel aLabel = new JLabel("test");
-        frame.getContentPane().add(aLabel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 300);
-        frame.setVisible(true);
+        new CrashAssistantGUI();
     }
 }
