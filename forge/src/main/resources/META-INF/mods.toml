@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[43,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "crash_assistant"
+version = "${version}"
+displayName = "Crash Assistant"
+authors = "KostromDan"
+description = '''
+Adds a GUI after Minecraft crashed, allowing you to open, upload crash reports or logs to Pastebin, copy links, and perform other actions for easier reporting, debugging or troubleshooting.
+'''
+#logoFile = ""
+
+[[dependencies.crash_assistant]]
+modId = "forge"
+mandatory = true
+versionRange = "[43.4.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.crash_assistant]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.2,)"
+ordering = "NONE"
+side = "BOTH"

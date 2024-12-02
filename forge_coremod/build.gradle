@@ -1,0 +1,59 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+configurations {
+    common_loading_utils {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common_loading_utils
+    runtimeClasspath.extendsFrom common_loading_utils
+    developmentForge.extendsFrom common_loading_utils
+
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:$rootProject.forge_version"
+    common_loading_utils(project(path: ':common_loading_utils', configuration: 'namedElements')) { transitive false }
+    shadowBundle project(path: ':common_loading_utils', configuration: 'transformProductionForge')
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('META-INF/mods.toml') {
+        expand version: project.version
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    dependsOn(':app:shadowJar', ':forge:build')
+
+    from(project(':app').layout.buildDirectory.dir('libs')) {
+        include 'app.jar'
+        into 'META-INF/jarjar'
+    }
+    from(project(':forge').layout.buildDirectory.dir('libs')) {
+        include 'crash_assistant-forge-' + project.version + '.jar'
+        rename { String fileName ->
+            "mod.jar"
+        }
+        into 'META-INF/jarjar'
+    }
+    input.set shadowJar.archiveFile
+}

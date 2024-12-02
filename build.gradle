@@ -1,113 +1,67 @@
 plugins {
-    id 'eclipse'
-    id 'idea'
-    id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'dev.architectury.loom' version '1.6-SNAPSHOT' apply false
+    id 'architectury-plugin' version '3.4-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
 
-version = mod_version
-group = mod_group_id
-
-base {
-    archivesName = mod_id
+architectury {
+    minecraft = project.minecraft_version
 }
 
-// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+allprojects {
+    group = rootProject.maven_group
+    version = rootProject.mod_version
+}
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
+subprojects { subproject ->
+    if (!(subproject.name in ['app'])) {
+        apply plugin: 'dev.architectury.loom'
+        apply plugin: 'architectury-plugin'
+        apply plugin: 'maven-publish'
 
-    mappings channel: mapping_channel, version: mapping_version
-
-    copyIdeResources = true
-
-    runs {
-        configureEach {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            property 'forge.logging.console.level', 'debug'
-
-            property 'forge.enabledGameTestNamespaces', mod_id
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
+        if (subproject.name in ['forge_coremod']) {
+            base {
+                archivesName = "$rootProject.archives_name-forge"
+            }
+        } else {
+            base {
+                archivesName = "$rootProject.archives_name-$project.name"
             }
         }
 
-        client {
-            property 'forge.enabledGameTestNamespaces', mod_id
+        repositories {
         }
 
-        server {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui'
+        loom {
+            silentMojangMappingsLicense()
         }
 
-        gameTestServer {
-            property 'forge.enabledGameTestNamespaces', mod_id
+        dependencies {
+            minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
+            mappings loom.officialMojangMappings()
         }
 
-        data {
-            workingDirectory project.file('run-data')
+        java {
+            withSourcesJar()
 
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
-    }
-}
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+        tasks.withType(JavaCompile).configureEach {
+            it.options.release = 17
+        }
 
-repositories {
-}
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    artifactId = base.archivesName.get()
+                    from components.java
+                }
+            }
 
-dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-}
-
-tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
-            forge_version: forge_version, forge_version_range: forge_version_range,
-            loader_version_range: loader_version_range,
-            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_authors: mod_authors, mod_description: mod_description,
-    ]
-    inputs.properties replaceProperties
-}
-
-tasks.named('jar', Jar).configure {
-    dependsOn(':CrashAssistantApp:shadowJar', ':CrashAssistantMod:build')
-
-    from(project(':CrashAssistantApp').layout.buildDirectory.dir('libs')) {
-        include 'CrashAssistantApp.jar'
-        into 'META-INF/jarjar'
-    }
-    from(project(':CrashAssistantMod').layout.buildDirectory.dir('libs')) {
-        include 'CrashAssistantMod.jar'
-        into 'META-INF/jarjar'
-    }
-
-    finalizedBy 'reobfJar'
-}
-
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            artifact jar
+            repositories {
+            }
         }
     }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

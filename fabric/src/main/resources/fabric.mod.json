@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "crash_assistant",
+  "version": "${version}",
+  "name": "Crash Assistant",
+  "description": "Adds a GUI after Minecraft crashed, allowing you to open, upload crash reports or logs to Pastebin, copy links, and perform other actions for easier reporting, debugging or troubleshooting.",
+  "authors": [
+    "KostromDan"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/crash_assistant/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "dev.kostromdan.mods.crash_assistant.fabric.pre_launch.CrashAssistantPreLaunch"
+    ],
+    "main": [
+      "dev.kostromdan.mods.crash_assistant.fabric.CrashAssistantFabric"
+    ],
+    "client": [
+      "dev.kostromdan.mods.crash_assistant.fabric.client.CrashAssistantFabricClient"
+    ]
+  },
+  "mixins": [
+    "crash_assistant.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "minecraft": "~1.19.2",
+    "java": ">=17",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
