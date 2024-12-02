@@ -16,14 +16,6 @@ configurations {
     runtimeClasspath.extendsFrom common
     developmentFabric.extendsFrom common
 
-    common_loading_utils {
-        canBeResolved = true
-        canBeConsumed = false
-    }
-    compileClasspath.extendsFrom common_loading_utils
-    runtimeClasspath.extendsFrom common_loading_utils
-    developmentFabric.extendsFrom common_loading_utils
-
     shadowBundle {
         canBeResolved = true
         canBeConsumed = false
@@ -38,8 +30,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-    common_loading_utils(project(path: ':common_loading_utils', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':common_loading_utils', configuration: 'transformProductionFabric')
+    implementation project(path: ':common_loading_utils')
 }
 
 processResources {
@@ -56,12 +47,13 @@ shadowJar {
 }
 
 remapJar {
-    dependsOn(':app:shadowJar')
+    dependsOn(':app:shadowJar', ':common_loading_utils:build')
 
     from(project(':app').layout.buildDirectory.dir('libs')) {
         include 'app.jar'
         into 'META-INF/jarjar'
     }
+    from(project(':common_loading_utils').sourceSets.main.output) // Включение исходников из модуля
 
     input.set shadowJar.archiveFile
 }

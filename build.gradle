@@ -19,12 +19,11 @@ subprojects { subproject ->
         apply plugin: 'architectury-plugin'
         apply plugin: 'maven-publish'
 
-        if (subproject.name in ['forge_coremod']) {
-            base {
+
+        base {
+            if (subproject.name in ['forge_coremod']) {
                 archivesName = "$rootProject.archives_name-forge"
-            }
-        } else {
-            base {
+            }else{
                 archivesName = "$rootProject.archives_name-$project.name"
             }
         }
