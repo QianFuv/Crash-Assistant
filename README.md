@@ -1,7 +1,6 @@
 # Crash Assistant
 
-Adds a GUI after Minecraft crashed, allowing you to open, upload crash reports or logs to Pastebin, copy links, and perform other actions for easier reporting,debugging or troubleshooting.
-
+Shows a GUI after Minecraft crashes, immediately showing all affected logs, crash reports, or hs_err files. Provides a one-click solution to upload them, copy the link, and perform other actions for easier reporting, debugging, and troubleshooting.
 ## Contributing:
 Use gradle `build` task. Compiled jars can be found in:
 * `fabric\build\libs` for fabric

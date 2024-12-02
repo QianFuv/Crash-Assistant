@@ -6,7 +6,7 @@ import cpw.mods.modlauncher.api.ITransformer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dev.kostromdan.mods.crash_assistant.loading_utils.JarExtractor;
+import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class CrashAssistantTransformationService implements ITransformationServi
 
     static {
         LOGGER.info("Launching CrashAssistantApp");
-        JarExtractor.launchCrashAssistantApp();
+        JarInJarHelper.launchCrashAssistantApp();
     }
 
     @Override

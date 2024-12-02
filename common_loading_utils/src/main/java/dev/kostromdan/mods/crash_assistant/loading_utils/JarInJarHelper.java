@@ -12,14 +12,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.Map;
-import java.util.Objects;
 
-public interface JarExtractor {
-    Logger LOGGER = LoggerFactory.getLogger("CrashAssistantJarExtractor");
+public interface JarInJarHelper {
+    Logger LOGGER = LoggerFactory.getLogger("CrashAssistantJarInJarHelper");
 
     static void launchCrashAssistantApp() {
         try {
-            Path extractedJarPath = extractFromCoreMod("app.jar");
+            Path extractedJarPath = extractJarInJar("app.jar");
 
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
                     "java", "-jar", extractedJarPath.toAbsolutePath().toString(),
@@ -33,13 +32,13 @@ public interface JarExtractor {
         }
     }
 
-    static Path extractFromCoreMod(String jarInJarName) throws IOException {
+    static Path extractJarInJar(String name) throws IOException {
         Path outputDirectory = Paths.get("local", "crash_assistant");
         if (!Files.exists(outputDirectory)) {
             Files.createDirectories(outputDirectory);
         }
 
-        Path extractedJarPath = outputDirectory.resolve(jarInJarName);
+        Path extractedJarPath = outputDirectory.resolve(name);
 
         try {
             Files.deleteIfExists(extractedJarPath);
@@ -47,10 +46,10 @@ public interface JarExtractor {
             LOGGER.warn("Error while deleting App jar, seems like GUI from prev. launch is still running: ", e);
         }
 
-        InputStream jarStream = JarExtractor.class.getResourceAsStream("/META-INF/jarjar/" + jarInJarName);
+        InputStream jarStream = JarInJarHelper.class.getResourceAsStream("/META-INF/jarjar/" + name);
 
         if (jarStream == null) {
-            throw new FileNotFoundException("Could not find embedded JAR: " + jarInJarName);
+            throw new FileNotFoundException("Could not find embedded JAR: " + name);
         }
 
         try (OutputStream out = Files.newOutputStream(extractedJarPath)) {
@@ -64,9 +63,9 @@ public interface JarExtractor {
         return extractedJarPath;
     }
 
-    static Path getFromCoreMod(String jarInJarName) throws IOException, URISyntaxException {
+    static Path getJarInJar(String name) throws IOException, URISyntaxException {
         //Idea taken from org.sinytra.connector.locator.EmbeddedDependencies#getJarInJar
-        Path pathInModFile = Path.of(JarExtractor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("META-INF/jarjar/"+jarInJarName);
+        Path pathInModFile = Path.of(JarInJarHelper.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("META-INF/jarjar/"+name);
         URI filePathUri = new URI("jij:" + pathInModFile.toAbsolutePath().toUri().getRawSchemeSpecificPart()).normalize();
         Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
         FileSystem zipFS = FileSystems.newFileSystem(filePathUri, outerFsArgs);

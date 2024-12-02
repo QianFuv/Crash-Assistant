@@ -5,7 +5,7 @@ import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dev.kostromdan.mods.crash_assistant.loading_utils.JarExtractor;
+import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class CrashAssistantDependencyLocator extends AbstractJarFileModProvider 
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
         List<IModFile> mods = new ArrayList<>();
         try {
-            mods.add(createMod(JarExtractor.getFromCoreMod("mod.jar")).file());
+            mods.add(createMod(JarInJarHelper.getJarInJar("mod.jar")).file());
         } catch (Exception e) {
             LOGGER.error("Error while extracting CrashAssistantMod.jar: ", e);
         }
