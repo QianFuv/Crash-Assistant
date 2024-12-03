@@ -12,6 +12,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public interface JarInJarHelper {
     Logger LOGGER = LoggerFactory.getLogger("CrashAssistantJarInJarHelper");
@@ -20,9 +22,16 @@ public interface JarInJarHelper {
         try {
             Path extractedJarPath = extractJarInJar("app.jar");
 
+            ProcessHandle currentProcess = ProcessHandle.current();
+            Optional<String> javaBinary = currentProcess.info().command();
+
+            if (javaBinary.isEmpty()) {
+                throw new IllegalStateException("Unable to determine the java binary path of current JVM. Crash Assistant won't work.");
+            }
+
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
-                    "java", "-jar", extractedJarPath.toAbsolutePath().toString(),
-                    "-parentPID", PIDHelper.getCurrentProcessID(),
+                    javaBinary.get(), "-jar", extractedJarPath.toAbsolutePath().toString(),
+                    "-parentPID", Objects.toString(currentProcess.pid()),
                     "-Xmx1024m"
             );
             crashAssistantAppProcess.start();
@@ -65,7 +74,7 @@ public interface JarInJarHelper {
 
     static Path getJarInJar(String name) throws IOException, URISyntaxException {
         //Idea taken from org.sinytra.connector.locator.EmbeddedDependencies#getJarInJar
-        Path pathInModFile = Path.of(JarInJarHelper.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("META-INF/jarjar/"+name);
+        Path pathInModFile = Path.of(JarInJarHelper.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("META-INF/jarjar/" + name);
         URI filePathUri = new URI("jij:" + pathInModFile.toAbsolutePath().toUri().getRawSchemeSpecificPart()).normalize();
         Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
         FileSystem zipFS = FileSystems.newFileSystem(filePathUri, outerFsArgs);
