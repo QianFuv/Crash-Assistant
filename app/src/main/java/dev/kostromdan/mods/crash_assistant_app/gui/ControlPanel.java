@@ -13,7 +13,7 @@ public class ControlPanel {
         panel = new JPanel(new BorderLayout());
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 
-        JButton uploadAllButton = new JButton("upload all and copy report msg");
+        JButton uploadAllButton = new JButton("upload all and copy msg with links to all files");
         uploadAllButton.addActionListener(e -> uploadAllFiles());
 
         buttonPanel.add(uploadAllButton);

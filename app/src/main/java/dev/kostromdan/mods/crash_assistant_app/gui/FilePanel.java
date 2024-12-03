@@ -7,7 +7,7 @@ public class FilePanel {
     private JPanel panel;
     private String fileName;
 
-    public FilePanel(String fileName, FileListPanel parentPanel) {
+    public FilePanel(String fileName) {
         this.fileName = fileName;
 
         panel = new JPanel(new BorderLayout());
@@ -16,10 +16,11 @@ public class FilePanel {
         JLabel fileNameLabel = new JLabel(fileName);
         panel.add(fileNameLabel, BorderLayout.CENTER);
 
-        // Используем FlowLayout для кнопок, чтобы каждая кнопка могла иметь свою ширину
+        JPanel spacerPanel = new JPanel();
+        spacerPanel.setPreferredSize(new Dimension(10, 0));
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
-        // Кнопки с фиксированными размерами
         JButton openButton = new JButton("open");
         openButton.setPreferredSize(new Dimension(62, 25));
         openButton.addActionListener(e -> openFile());
@@ -32,7 +33,7 @@ public class FilePanel {
         uploadButton.setPreferredSize(new Dimension(149, 25));
         uploadButton.addActionListener(e -> uploadFile());
 
-        // Добавляем кнопки на панель
+        buttonPanel.add(spacerPanel);
         buttonPanel.add(openButton);
         buttonPanel.add(showButton);
         buttonPanel.add(uploadButton);

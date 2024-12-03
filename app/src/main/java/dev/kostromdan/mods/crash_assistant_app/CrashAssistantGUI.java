@@ -14,7 +14,7 @@ public class CrashAssistantGUI {
     public CrashAssistantGUI() {
         frame = new JFrame("Crash Assistant");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("Oops, Minecraft crashed!", SwingConstants.LEFT);
@@ -26,6 +26,18 @@ public class CrashAssistantGUI {
 
         controlPanel = new ControlPanel(fileListPanel);
         frame.add(controlPanel.getPanel(), BorderLayout.SOUTH);
+
+        fileListPanel.addFile("lastest.log");
+        fileListPanel.addFile("debug.log");
+        fileListPanel.addFile("crash-2024-11-29_14.34.03-client.txt");
+        fileListPanel.addFile("crash-2024-11-29_14.35.07-fml.txt");
+        fileListPanel.addFile("hs_err_pid29788.log");
+        fileListPanel.addFile("kubejs/client.log");
+        fileListPanel.addFile("kubejs/server.log");
+        fileListPanel.addFile("kubejs/startup.log");
+
+
+        frame.setSize(fileListPanel.getFileListPanel().getPreferredSize().width + 26, frame.getHeight());
 
         frame.setVisible(true);
     }

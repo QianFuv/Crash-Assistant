@@ -12,23 +12,20 @@ public class FileListPanel {
         fileListPanel.setLayout(new BoxLayout(fileListPanel, BoxLayout.Y_AXIS));
 
         scrollPane = new JScrollPane(fileListPanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Available log files:"));
-
-        this.addFile("lastest.log");
-        this.addFile("debug.log");
-        this.addFile("crash-2024-11-29_14.34.03-client.txt");
-        this.addFile("crash-2024-11-29_14.35.07-fml.txt");
-        this.addFile("hs_err_pid29788.log");
     }
 
     public JScrollPane getScrollPane() {
         return scrollPane;
     }
+    public JPanel getFileListPanel() {
+        return fileListPanel;
+    }
 
     public void addFile(String fileName) {
         if (fileName != null && !fileName.trim().isEmpty()) {
-            FilePanel filePanel = new FilePanel(fileName, this);
+            FilePanel filePanel = new FilePanel(fileName);
             fileListPanel.add(filePanel.getPanel());
             fileListPanel.revalidate();
         }
