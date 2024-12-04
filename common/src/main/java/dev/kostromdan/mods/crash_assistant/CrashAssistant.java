@@ -9,6 +9,6 @@ public final class CrashAssistant {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static void init() {
-        ManualCrashThrower.crashGame(); // debug crash.
+//        ManualCrashThrower.crashGame(); // debug crash.
     }
 }
