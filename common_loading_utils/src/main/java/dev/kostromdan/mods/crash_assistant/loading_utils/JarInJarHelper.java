@@ -31,7 +31,7 @@ public interface JarInJarHelper {
 
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
                     javaBinary.get(), "-jar", extractedJarPath.toAbsolutePath().toString(),
-                    "-parentPID", Objects.toString(currentProcess.pid()),
+                    "-parentPID", PIDHelper.getCurrentProcessID(),
                     "-Xmx1024m"
             );
             crashAssistantAppProcess.start();

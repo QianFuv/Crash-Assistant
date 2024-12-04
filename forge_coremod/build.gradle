@@ -35,12 +35,10 @@ shadowJar {
 remapJar {
     dependsOn(':app:shadowJar', ':forge:build', ':common_loading_utils:build')
 
-    from(project(':app').layout.buildDirectory.dir('libs')) {
-        include 'app.jar'
+    from(project(':app').tasks.shadowJar){
         into 'META-INF/jarjar'
     }
-    from(project(':forge').layout.buildDirectory.dir('libs')) {
-        include 'crash_assistant-forge-' + project.version + '.jar'
+    from(project(':forge').tasks.remapJar) {
         rename { String fileName ->
             "mod.jar"
         }

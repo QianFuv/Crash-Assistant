@@ -5,13 +5,17 @@ import dev.kostromdan.mods.crash_assistant_app.gui.FileListPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class CrashAssistantGUI {
     private JFrame frame;
     private FileListPanel fileListPanel;
     private ControlPanel controlPanel;
 
-    public CrashAssistantGUI() {
+    public CrashAssistantGUI(Map<String, Path> availableLogs) {
         frame = new JFrame("Crash Assistant");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
@@ -27,22 +31,13 @@ public class CrashAssistantGUI {
         controlPanel = new ControlPanel(fileListPanel);
         frame.add(controlPanel.getPanel(), BorderLayout.SOUTH);
 
-        fileListPanel.addFile("lastest.log");
-        fileListPanel.addFile("debug.log");
-        fileListPanel.addFile("crash-2024-11-29_14.34.03-client.txt");
-        fileListPanel.addFile("crash-2024-11-29_14.35.07-fml.txt");
-        fileListPanel.addFile("hs_err_pid29788.log");
-        fileListPanel.addFile("kubejs/client.log");
-        fileListPanel.addFile("kubejs/server.log");
-        fileListPanel.addFile("kubejs/startup.log");
+        for (Map.Entry<String, Path> entry : availableLogs.entrySet()) {
+            fileListPanel.addFile(entry.getKey(), entry.getValue());
+        }
 
 
         frame.setSize(fileListPanel.getFileListPanel().getPreferredSize().width + 26, frame.getHeight());
 
         frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(CrashAssistantGUI::new);
     }
 }

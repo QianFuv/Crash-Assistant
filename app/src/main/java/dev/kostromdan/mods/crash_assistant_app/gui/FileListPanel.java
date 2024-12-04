@@ -2,6 +2,7 @@ package dev.kostromdan.mods.crash_assistant_app.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Path;
 
 public class FileListPanel {
     private JPanel fileListPanel;
@@ -19,16 +20,15 @@ public class FileListPanel {
     public JScrollPane getScrollPane() {
         return scrollPane;
     }
+
     public JPanel getFileListPanel() {
         return fileListPanel;
     }
 
-    public void addFile(String fileName) {
-        if (fileName != null && !fileName.trim().isEmpty()) {
-            FilePanel filePanel = new FilePanel(fileName);
-            fileListPanel.add(filePanel.getPanel());
-            fileListPanel.revalidate();
-        }
+    public void addFile(String fileName, Path file) {
+        FilePanel filePanel = new FilePanel(fileName, file);
+        fileListPanel.add(filePanel.getPanel());
+        fileListPanel.revalidate();
     }
 
     public void uploadAllFiles() {

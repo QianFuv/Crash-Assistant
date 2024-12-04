@@ -1,13 +1,20 @@
 package dev.kostromdan.mods.crash_assistant_app.gui;
 
+import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class FilePanel {
     private JPanel panel;
+    private Path file;
     private String fileName;
 
-    public FilePanel(String fileName) {
+    public FilePanel(String fileName, Path file) {
+        this.file = file;
+
         this.fileName = fileName;
 
         panel = new JPanel(new BorderLayout());
@@ -48,14 +55,32 @@ public class FilePanel {
         return panel;
     }
 
+    /**
+     * Opens the file using the default application associated with its type.
+     */
     private void openFile() {
-        System.out.println("Opening file: " + fileName);
-        JOptionPane.showMessageDialog(null, "File '" + fileName + "' opened.");
+        try {
+            Desktop.getDesktop().open(file.toFile());
+        } catch (IOException e) {
+            CrashAssistantApp.LOGGER.error("Failed to open file: ", e);
+        }
     }
 
+
+    /**
+     * Opens the file's directory in the system file explorer and selects the file.
+     */
     private void showInExplorer() {
-        System.out.println("Showing file in Explorer: " + fileName);
-        JOptionPane.showMessageDialog(null, "File '" + fileName + "' shown in Explorer.");
+        try {
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                new ProcessBuilder("explorer.exe", "/select,", file.toAbsolutePath().toString()).start();
+            } else {
+                Desktop.getDesktop().open(file.toFile().getParentFile());
+            }
+        } catch (Exception e) {
+            CrashAssistantApp.LOGGER.error("Failed to show file in explorer: ", e);
+        }
+
     }
 
     private void uploadFile() {
