@@ -1,19 +1,29 @@
 package dev.kostromdan.mods.crash_assistant_app.gui;
 
 import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant_app.exceptions.UploadException;
+import dev.kostromdan.mods.crash_assistant_app.utils.ClipboardUtils;
+import gs.mclo.api.response.UploadLogResponse;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
 
 public class FilePanel {
     private JPanel panel;
-    private Path file;
+    private Path filePath;
     private String fileName;
+    private JButton uploadButton;
+    private String uploadedLink = null;
+    Border thinBorder;
 
-    public FilePanel(String fileName, Path file) {
-        this.file = file;
+    public FilePanel(String fileName, Path filePath) {
+        this.filePath = filePath;
 
         this.fileName = fileName;
 
@@ -28,17 +38,18 @@ public class FilePanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
-        JButton openButton = new JButton("open");
-        openButton.setPreferredSize(new Dimension(62, 25));
-        openButton.addActionListener(e -> openFile());
+        thinBorder = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createEmptyBorder(new JButton().getBorder().getBorderInsets(new JButton()).top, 9, new JButton().getBorder().getBorderInsets(new JButton()).bottom, 9)
+        );
 
-        JButton showButton = new JButton("show in explorer");
-        showButton.setPreferredSize(new Dimension(129, 25));
-        showButton.addActionListener(e -> showInExplorer());
 
-        JButton uploadButton = new JButton("upload and copy link");
-        uploadButton.setPreferredSize(new Dimension(149, 25));
-        uploadButton.addActionListener(e -> uploadFile());
+        JButton openButton = createButton("open", e -> openFile());
+
+        JButton showButton = createButton("show in explorer", e -> showInExplorer());
+
+        uploadButton = createButton("upload and copy link", e -> uploadFile());
+
 
         buttonPanel.add(spacerPanel);
         buttonPanel.add(openButton);
@@ -51,6 +62,21 @@ public class FilePanel {
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
     }
 
+    public static JButton createButton(String text, ActionListener actionListener) {
+        JButton button = new JButton(text);
+        button.addActionListener(actionListener);
+        button.setPreferredSize(new Dimension(button.getPreferredSize().width, 25));
+        return button;
+    }
+
+    public static JButton createButtonWithBorder(String text, ActionListener actionListener, Border border) {
+        JButton button = new JButton(text);
+        button.addActionListener(actionListener);
+        button.setBorder(border);
+        button.setPreferredSize(new Dimension(button.getPreferredSize().width, 25));
+        return button;
+    }
+
     public JPanel getPanel() {
         return panel;
     }
@@ -60,7 +86,7 @@ public class FilePanel {
      */
     private void openFile() {
         try {
-            Desktop.getDesktop().open(file.toFile());
+            Desktop.getDesktop().open(filePath.toFile());
         } catch (IOException e) {
             CrashAssistantApp.LOGGER.error("Failed to open file: ", e);
         }
@@ -73,9 +99,9 @@ public class FilePanel {
     private void showInExplorer() {
         try {
             if (System.getProperty("os.name").startsWith("Windows")) {
-                new ProcessBuilder("explorer.exe", "/select,", file.toAbsolutePath().toString()).start();
+                new ProcessBuilder("explorer.exe", "/select,", filePath.toAbsolutePath().toString()).start();
             } else {
-                Desktop.getDesktop().open(file.toFile().getParentFile());
+                Desktop.getDesktop().open(filePath.toFile().getParentFile());
             }
         } catch (Exception e) {
             CrashAssistantApp.LOGGER.error("Failed to show file in explorer: ", e);
@@ -83,9 +109,93 @@ public class FilePanel {
 
     }
 
+    private void openInBrowser() {
+        try {
+            Desktop.getDesktop().browse(new URL(uploadedLink).toURI());
+        } catch (Exception e) {
+            CrashAssistantApp.LOGGER.error("Failed to open in link browser: ", e);
+        }
+
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getUploadedLink() {
+        return uploadedLink;
+    }
+
+    public String getUploadButtonText() {
+        return uploadButton.getText();
+    }
+
     private void uploadFile() {
-        System.out.println("Uploading file: " + fileName);
-        JOptionPane.showMessageDialog(null, "File '" + fileName + "' uploaded.");
+        uploadFile(true);
+    }
+
+    public void uploadFile(boolean fromButton) {
+        new Thread(() -> {
+            if (uploadedLink == null) {
+                uploadButton.setEnabled(false);
+                uploadButton.setText("Uploading!");
+
+                try {
+                    UploadLogResponse response = CrashAssistantApp.MCLogsClient.uploadLog(filePath).get();
+                    response.setClient(CrashAssistantApp.MCLogsClient);
+
+                    if (response.isSuccess()) {
+                        uploadedLink = response.getUrl();
+                    } else {
+                        throw new UploadException("An error occurred when uploading file: " + response.getError());
+                    }
+                } catch (IOException | ExecutionException | InterruptedException | UploadException e) {
+                    {
+                        CrashAssistantApp.LOGGER.info("Failed to upload file \"" + filePath + "\": ", e);
+                        uploadButton.setText("Error!");
+                        if (e.getMessage().contains("Required POST argument 'content' is empty.")) {
+                            uploadButton.setText("Empty file!");
+                            return;
+                        }
+                        if (fromButton) {
+                            JOptionPane.showMessageDialog(
+                                    panel,
+                                    "Failed to upload file \"" + filePath + "\": " + e,
+                                    "Failed to upload file!",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                        new java.util.Timer().schedule(
+                                new java.util.TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        uploadButton.setText("upload and copy link");
+                                        uploadButton.setEnabled(true);
+                                    }
+                                },
+                                3000
+                        );
+                        return;
+                    }
+                }
+            }
+            if (fromButton) {
+                ClipboardUtils.copy(uploadedLink);
+                uploadButton.setText("Copied!");
+                uploadButton.setEnabled(false);
+            }
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            uploadButton.setText("copy link");
+                            uploadButton.setEnabled(true);
+                            panel.revalidate();
+                        }
+                    },
+                    fromButton ? 2000 : 0
+            );
+        }).start();
     }
 }
 

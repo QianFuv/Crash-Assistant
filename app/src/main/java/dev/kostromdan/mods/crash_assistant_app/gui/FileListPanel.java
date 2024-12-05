@@ -1,12 +1,15 @@
 package dev.kostromdan.mods.crash_assistant_app.gui;
 
 import javax.swing.*;
-import java.awt.*;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FileListPanel {
     private JPanel fileListPanel;
     private JScrollPane scrollPane;
+    private final Set<FilePanel> filePanelList = new HashSet<>();
 
     public FileListPanel() {
         fileListPanel = new JPanel();
@@ -27,26 +30,17 @@ public class FileListPanel {
 
     public void addFile(String fileName, Path file) {
         FilePanel filePanel = new FilePanel(fileName, file);
+        filePanelList.add(filePanel);
         fileListPanel.add(filePanel.getPanel());
         fileListPanel.revalidate();
     }
 
     public void uploadAllFiles() {
-        Component[] components = fileListPanel.getComponents();
-        if (components.length == 0) {
-            JOptionPane.showMessageDialog(null, "No files to upload!");
-            return;
+        HashMap<String, String> nameLink = new HashMap<>();
+        for (FilePanel panel : filePanelList) {
+            panel.uploadFile(false);
+            nameLink.put(panel.getFileName(), panel.getUploadButtonText() != "Empty file!" ? panel.getUploadedLink() : "Empty file!");
         }
-
-        for (Component component : components) {
-            if (component instanceof JPanel) {
-                JPanel filePanel = (JPanel) component;
-                JLabel fileNameLabel = (JLabel) filePanel.getComponent(0);
-                String fileName = fileNameLabel.getText();
-                System.out.println("Uploading: " + fileName);
-            }
-        }
-        JOptionPane.showMessageDialog(null, "All files uploaded successfully!");
     }
 }
 

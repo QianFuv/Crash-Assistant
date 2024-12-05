@@ -1,6 +1,7 @@
 package dev.kostromdan.mods.crash_assistant_app;
 
 import dev.kostromdan.mods.crash_assistant_app.utils.*;
+import gs.mclo.api.MclogsClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CrashAssistantApp {
     public static final Logger LOGGER = LogManager.getLogger(CrashAssistantApp.class);
+    public static final MclogsClient MCLogsClient = new MclogsClient("CrashAssistant");
     public static long parentPID;
 
     public static void main(String[] args) {
@@ -68,6 +70,8 @@ public class CrashAssistantApp {
         FileUtils.addIfExists(availableLogs, "kubejs/client.log", Paths.get("logs", "kubejs", "client.log"));
         FileUtils.addIfExists(availableLogs, "kubejs/server.log", Paths.get("logs", "kubejs", "server.log"));
         FileUtils.addIfExists(availableLogs, "kubejs/startup.log", Paths.get("logs", "kubejs", "startup.log"));
+        FileUtils.addIfExists(availableLogs, "crash_assistant/latest.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
+        FileUtils.addIfExists(availableLogs, "crash_assistant/latest1.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
 
         Optional<Path> hsErrLog = HsErrHelper.locateHsErrLog(parentPID);
         if (hsErrLog.isPresent()) {

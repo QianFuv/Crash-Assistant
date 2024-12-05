@@ -52,7 +52,7 @@ public interface JarInJarHelper {
         try {
             Files.deleteIfExists(extractedJarPath);
         } catch (IOException e) {
-            LOGGER.warn("Error while deleting App jar, seems like GUI from prev. launch is still running: ", e);
+            LOGGER.warn("Error while deleting app.jar, seems like GUI from prev. launch is still running: ", e);
         }
 
         InputStream jarStream = JarInJarHelper.class.getResourceAsStream("/META-INF/jarjar/" + name);

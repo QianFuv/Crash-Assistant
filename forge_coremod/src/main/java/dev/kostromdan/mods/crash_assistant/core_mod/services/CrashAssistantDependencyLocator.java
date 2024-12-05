@@ -24,7 +24,7 @@ public class CrashAssistantDependencyLocator extends AbstractJarFileModProvider 
         try {
             mods.add(createMod(JarInJarHelper.getJarInJar("mod.jar")).file());
         } catch (Exception e) {
-            LOGGER.error("Error while extracting CrashAssistantMod.jar: ", e);
+            LOGGER.error("Error while extracting mod.jar: ", e);
         }
         return mods;
     }
