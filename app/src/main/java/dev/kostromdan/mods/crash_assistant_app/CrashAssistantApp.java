@@ -80,7 +80,6 @@ public class CrashAssistantApp {
         FileUtils.addIfExistsAndModified(availableLogs, "kubejs/startup.log", Paths.get("logs", "kubejs", "startup.log"));
 
         FileUtils.addIfExistsAndModified(availableLogs, "CrashAssistant: latest.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
-        FileUtils.addIfExistsAndModified(availableLogs, "CrashAssistant: latest1.log", Paths.get("local", "crash_assistant", "logs", "latest1.log"));
 
         FileUtils.addIfExistsAndModified(availableLogs, "MinecraftLauncher: launcher_log.txt", Paths.get("launcher_log.txt" ));
         FileUtils.addIfExistsAndModified(availableLogs, "CurseForge: launcher_log.txt", Paths.get("../../Install","launcher_log.txt" ));

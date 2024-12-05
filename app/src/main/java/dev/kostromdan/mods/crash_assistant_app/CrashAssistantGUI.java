@@ -6,8 +6,6 @@ import dev.kostromdan.mods.crash_assistant_app.gui.FileListPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class CrashAssistantGUI {
@@ -35,7 +33,7 @@ public class CrashAssistantGUI {
             fileListPanel.addFile(entry.getKey(), entry.getValue());
         }
 
-        frame.setSize(fileListPanel.getFileListPanel().getPreferredSize().width + 26, frame.getHeight());
+        frame.setSize(Math.max(fileListPanel.getFileListPanel().getPreferredSize().width, controlPanel.getPanel().getPreferredSize().width) + 26, frame.getHeight());
 
         frame.setVisible(true);
     }

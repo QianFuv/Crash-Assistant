@@ -27,7 +27,7 @@ public class ControlPanel {
 
         panel.add(buttonPanel, BorderLayout.CENTER);
 
-        JButton joinDiscordButton = new JButton("join Discord");
+        JButton joinDiscordButton = new JButton("request help in our Discord");
         joinDiscordButton.addActionListener(e -> joinDiscord());
         panel.add(joinDiscordButton, BorderLayout.EAST);
     }
