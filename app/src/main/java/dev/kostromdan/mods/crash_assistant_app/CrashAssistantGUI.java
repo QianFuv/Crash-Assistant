@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class CrashAssistantGUI {
-    private JFrame frame;
-    private FileListPanel fileListPanel;
-    private ControlPanel controlPanel;
+    private final JFrame frame;
+    private final FileListPanel fileListPanel;
+    private final ControlPanel controlPanel;
 
     public CrashAssistantGUI(Map<String, Path> availableLogs) {
         frame = new JFrame("Crash Assistant");
@@ -34,7 +34,6 @@ public class CrashAssistantGUI {
         for (Map.Entry<String, Path> entry : availableLogs.entrySet()) {
             fileListPanel.addFile(entry.getKey(), entry.getValue());
         }
-
 
         frame.setSize(fileListPanel.getFileListPanel().getPreferredSize().width + 26, frame.getHeight());
 

@@ -1,15 +1,20 @@
 package dev.kostromdan.mods.crash_assistant_app.gui;
 
+import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant_app.exceptions.UploadException;
+import dev.kostromdan.mods.crash_assistant_app.utils.ClipboardUtils;
+import gs.mclo.api.response.UploadLogResponse;
+
 import javax.swing.*;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class FileListPanel {
-    private JPanel fileListPanel;
-    private JScrollPane scrollPane;
-    private final Set<FilePanel> filePanelList = new HashSet<>();
+    private final JPanel fileListPanel;
+    private final JScrollPane scrollPane;
+    public final LinkedHashSet<FilePanel> filePanelList = new LinkedHashSet<>();
 
     public FileListPanel() {
         fileListPanel = new JPanel();
@@ -33,14 +38,6 @@ public class FileListPanel {
         filePanelList.add(filePanel);
         fileListPanel.add(filePanel.getPanel());
         fileListPanel.revalidate();
-    }
-
-    public void uploadAllFiles() {
-        HashMap<String, String> nameLink = new HashMap<>();
-        for (FilePanel panel : filePanelList) {
-            panel.uploadFile(false);
-            nameLink.put(panel.getFileName(), panel.getUploadButtonText() != "Empty file!" ? panel.getUploadedLink() : "Empty file!");
-        }
     }
 }
 

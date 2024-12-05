@@ -12,16 +12,39 @@ import java.util.Map;
 
 public interface FileUtils {
     static void addIfExists(Map<String, Path> map, Path path) {
-        addIfExists(map, path.getFileName().toString(), path);
+        addIfExistsAndModified(map, path.getFileName().toString(), path, false);
     }
 
     static void addIfExists(Map<String, Path> map, String fileName, Path path) {
+        addIfExistsAndModified(map, fileName, path, false);
+    }
+
+    static void addIfExistsAndModified(Map<String, Path> map, Path path) {
+        addIfExistsAndModified(map, path.getFileName().toString(), path, true);
+    }
+
+    static void addIfExistsAndModified(Map<String, Path> map, String fileName, Path path) {
+        addIfExistsAndModified(map, fileName, path, true);
+    }
+
+    static void addIfExistsAndModified(Map<String, Path> map, String fileName, Path path, boolean checkModified) {
         if (Files.exists(path) && Files.isRegularFile(path)) {
+            if (checkModified && path.toFile().lastModified() < CrashAssistantApp.parentStarted) {
+                return;
+            }
+            try {
+                if (Files.size(path) == 0) {
+                    CrashAssistantApp.LOGGER.info("File \"" + path + "\" is empty.");
+                    return;
+                }
+            } catch (IOException e) {
+                CrashAssistantApp.LOGGER.error("Error while checking file size \"" + path + "\": ", e);
+            }
             map.put(fileName, path);
         }
     }
 
-    static void removeTmpFiles(Path dir){
+    static void removeTmpFiles(Path dir) {
         try {
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override

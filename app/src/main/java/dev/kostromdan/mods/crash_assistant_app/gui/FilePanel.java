@@ -15,12 +15,13 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 public class FilePanel {
-    private JPanel panel;
-    private Path filePath;
-    private String fileName;
-    private JButton uploadButton;
+    private final JPanel panel;
+    private final Border thinBorder;
+    private final JButton uploadButton;
+    private final Path filePath;
+    private final String fileName;
     private String uploadedLink = null;
-    Border thinBorder;
+    private Exception lastError = null;
 
     public FilePanel(String fileName, Path filePath) {
         this.filePath = filePath;
@@ -48,7 +49,7 @@ public class FilePanel {
 
         JButton showButton = createButton("show in explorer", e -> showInExplorer());
 
-        uploadButton = createButton("upload and copy link", e -> uploadFile());
+        uploadButton = createButtonWithBorder("upload and copy link", e -> uploadFile(),thinBorder);
 
 
         buttonPanel.add(spacerPanel);
@@ -130,6 +131,14 @@ public class FilePanel {
         return uploadButton.getText();
     }
 
+    public Path getFilePath() {
+        return filePath;
+    }
+
+    public Exception getLastError() {
+        return lastError;
+    }
+
     private void uploadFile() {
         uploadFile(true);
     }
@@ -137,6 +146,7 @@ public class FilePanel {
     public void uploadFile(boolean fromButton) {
         new Thread(() -> {
             if (uploadedLink == null) {
+                lastError = null;
                 uploadButton.setEnabled(false);
                 uploadButton.setText("Uploading!");
 
@@ -151,12 +161,9 @@ public class FilePanel {
                     }
                 } catch (IOException | ExecutionException | InterruptedException | UploadException e) {
                     {
+                        lastError = e;
                         CrashAssistantApp.LOGGER.info("Failed to upload file \"" + filePath + "\": ", e);
                         uploadButton.setText("Error!");
-                        if (e.getMessage().contains("Required POST argument 'content' is empty.")) {
-                            uploadButton.setText("Empty file!");
-                            return;
-                        }
                         if (fromButton) {
                             JOptionPane.showMessageDialog(
                                     panel,

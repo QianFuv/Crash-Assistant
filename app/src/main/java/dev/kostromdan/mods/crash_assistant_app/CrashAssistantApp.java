@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,7 @@ public class CrashAssistantApp {
     public static final Logger LOGGER = LogManager.getLogger(CrashAssistantApp.class);
     public static final MclogsClient MCLogsClient = new MclogsClient("CrashAssistant");
     public static long parentPID;
+    public static long parentStarted;
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -22,12 +24,17 @@ public class CrashAssistantApp {
         });
 
         parentPID = -1;
-
         for (int i = 0; i < args.length; i++) {
             if ("-parentPID".equals(args[i]) && i + 1 < args.length) {
                 parentPID = Long.parseLong(args[i + 1]);
                 LOGGER.info("Parent PID: {}", parentPID);
             }
+        }
+
+        parentStarted = 0;
+        if (parentPID!=-1){
+            Optional<Instant> time = PIDHelper.findProcessByPID(parentPID).info().startInstant();
+            time.ifPresent(instant -> parentStarted = instant.toEpochMilli());
         }
 
         FileUtils.removeTmpFiles(Paths.get("local", "crash_assistant"));
@@ -65,13 +72,22 @@ public class CrashAssistantApp {
         boolean crashed_with_report = false;
         SortedMap<String, Path> availableLogs = new TreeMap<>(new LogsComparator());
 
-        FileUtils.addIfExists(availableLogs, Paths.get("logs", "latest.log"));
-        FileUtils.addIfExists(availableLogs, Paths.get("logs", "debug.log"));
-        FileUtils.addIfExists(availableLogs, "kubejs/client.log", Paths.get("logs", "kubejs", "client.log"));
-        FileUtils.addIfExists(availableLogs, "kubejs/server.log", Paths.get("logs", "kubejs", "server.log"));
-        FileUtils.addIfExists(availableLogs, "kubejs/startup.log", Paths.get("logs", "kubejs", "startup.log"));
-        FileUtils.addIfExists(availableLogs, "crash_assistant/latest.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
-        FileUtils.addIfExists(availableLogs, "crash_assistant/latest1.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, Paths.get("logs", "latest.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, Paths.get("logs", "debug.log"));
+
+        FileUtils.addIfExistsAndModified(availableLogs, "kubejs/client.log", Paths.get("logs", "kubejs", "client.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, "kubejs/server.log", Paths.get("logs", "kubejs", "server.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, "kubejs/startup.log", Paths.get("logs", "kubejs", "startup.log"));
+
+        FileUtils.addIfExistsAndModified(availableLogs, "CrashAssistant: latest.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, "CrashAssistant: latest1.log", Paths.get("local", "crash_assistant", "logs", "latest1.log"));
+
+        FileUtils.addIfExistsAndModified(availableLogs, "MinecraftLauncher: launcher_log.txt", Paths.get("launcher_log.txt" ));
+        FileUtils.addIfExistsAndModified(availableLogs, "CurseForge: launcher_log.txt", Paths.get("../../Install","launcher_log.txt" ));
+        String appdata = System.getenv("APPDATA");
+        if (appdata != null) {
+            FileUtils.addIfExistsAndModified(availableLogs, "AtLauncher: atlauncher.log", Paths.get(appdata, "AtLauncher", "logs", "atlauncher.log"));
+        }
 
         Optional<Path> hsErrLog = HsErrHelper.locateHsErrLog(parentPID);
         if (hsErrLog.isPresent()) {
