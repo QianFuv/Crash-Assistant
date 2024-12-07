@@ -22,7 +22,7 @@ public class CrashAssistantDependencyLocator extends AbstractJarFileModProvider 
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
         List<IModFile> mods = new ArrayList<>();
         try {
-            mods.add(createMod(JarInJarHelper.getJarInJar("mod.jar")).file());
+            mods.add(createMod(JarInJarHelper.getJarInJar("crash_assistant-forge.jar")).file());
         } catch (Exception e) {
             LOGGER.error("Error while extracting mod.jar: ", e);
         }

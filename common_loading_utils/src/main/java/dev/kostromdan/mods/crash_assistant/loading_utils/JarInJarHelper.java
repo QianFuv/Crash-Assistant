@@ -1,6 +1,8 @@
 package dev.kostromdan.mods.crash_assistant.loading_utils;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +14,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public interface JarInJarHelper {
@@ -29,9 +30,29 @@ public interface JarInJarHelper {
                 throw new IllegalStateException("Unable to determine the java binary path of current JVM. Crash Assistant won't work.");
             }
 
+
+            Path log4jApi;
+            try {
+                log4jApi = LibrariesJarLocator.getLibraryJarPath(LogManager.class);
+            } catch (Exception e) {
+                LOGGER.error("Unable to determine the log4jApi '.jar' path, Crash Assistant won't work.", e);
+                return;
+            }
+
+            Path log4jCore;
+            try {
+                log4jCore = LibrariesJarLocator.getLibraryJarPath(Core.class);
+            } catch (Exception e) {
+                LOGGER.error("Unable to determine the log4jCore '.jar' path, Crash Assistant won't work.", e);
+                return;
+            }
+
+
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
                     javaBinary.get(), "-jar", extractedJarPath.toAbsolutePath().toString(),
                     "-parentPID", PIDHelper.getCurrentProcessID(),
+                    "-log4jApi", log4jApi.toAbsolutePath().toString(),
+                    "-log4jCore", log4jCore.toAbsolutePath().toString(),
                     "-Xmx1024m"
             );
             crashAssistantAppProcess.start();

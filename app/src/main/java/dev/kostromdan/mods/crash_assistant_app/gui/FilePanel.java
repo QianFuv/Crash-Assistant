@@ -49,7 +49,7 @@ public class FilePanel {
 
         JButton showButton = createButton("show in explorer", e -> showInExplorer());
 
-        uploadButton = createButtonWithBorder("upload and copy link", e -> uploadFile(),thinBorder);
+        uploadButton = createButton("upload and copy link", e -> uploadFile());
 
 
         buttonPanel.add(spacerPanel);

@@ -106,7 +106,7 @@ public class CrashAssistantApp {
 
         String normalStopFileName = "normal_stop_pid" + parentPID + ".tmp";
         Path normalStopFilePath = Paths.get("local", "crash_assistant", normalStopFileName);
-        if (!(Files.exists(normalStopFilePath) || Files.isRegularFile(normalStopFilePath))) {
+        if (!(Files.exists(normalStopFilePath) && Files.isRegularFile(normalStopFilePath))) {
             crashed = true;
         }
 

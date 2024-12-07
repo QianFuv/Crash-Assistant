@@ -40,7 +40,7 @@ remapJar {
     }
     from(project(':forge').tasks.remapJar) {
         rename { String fileName ->
-            "mod.jar"
+            "crash_assistant-forge.jar"
         }
         into 'META-INF/jarjar'
     }

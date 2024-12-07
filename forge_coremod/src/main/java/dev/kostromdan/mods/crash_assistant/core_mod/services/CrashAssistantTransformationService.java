@@ -3,10 +3,10 @@ package dev.kostromdan.mods.crash_assistant.core_mod.services;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.ITransformer;
+import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
 
 import java.util.List;
 import java.util.Set;
