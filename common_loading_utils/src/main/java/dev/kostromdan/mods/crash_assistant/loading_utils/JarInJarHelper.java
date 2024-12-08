@@ -61,14 +61,14 @@ public interface JarInJarHelper {
             try {
                 nightConfigCore = LibrariesJarLocator.getLibraryJarPath(FileConfig.class);
             } catch (Exception e) {
-                LOGGER.error("Unable to determine the nightConfig '.jar' path, Crash Assistant won't work.", e);
+                LOGGER.error("Unable to determine the nightConfigCore '.jar' path, Crash Assistant won't work.", e);
                 return;
             }
             Path nightConfigToml;
             try {
                 nightConfigToml = LibrariesJarLocator.getLibraryJarPath(TomlFormat.class);
             } catch (Exception e) {
-                LOGGER.error("Unable to determine the nightConfig '.jar' path, Crash Assistant won't work.", e);
+                LOGGER.error("Unable to determine the nightConfigToml '.jar' path, Crash Assistant won't work.", e);
                 return;
             }
 
