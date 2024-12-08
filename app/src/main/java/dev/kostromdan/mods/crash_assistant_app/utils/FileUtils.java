@@ -51,7 +51,6 @@ public interface FileUtils {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (file.toString().endsWith(".tmp")) {
                         Files.delete(file);
-                        System.out.println("Deleted: " + file);
                     }
                     return FileVisitResult.CONTINUE;
                 }
