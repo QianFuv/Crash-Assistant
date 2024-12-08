@@ -148,7 +148,7 @@ public class FilePanel {
             if (uploadedLink == null) {
                 lastError = null;
                 uploadButton.setEnabled(false);
-                uploadButton.setText("Uploading!");
+                uploadButton.setText("Uploading...");
 
                 try {
                     UploadLogResponse response = CrashAssistantApp.MCLogsClient.uploadLog(filePath).get();

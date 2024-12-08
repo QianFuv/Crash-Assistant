@@ -48,7 +48,7 @@ public class ControlPanel {
         new Thread(() -> {
             uploadAllButton.setEnabled(false);
             if (generatedMsg == null) {
-                uploadAllButton.setText("Uploading!");
+                uploadAllButton.setText("Uploading...");
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     panel.uploadFile(false);
                 }
