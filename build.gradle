@@ -73,8 +73,6 @@ task collectJars(type: Copy) {
     dependsOn deps
     from deps
 
-    from(project(":app").file("build/libs/app.jar"))
-
     into 'build/libs'
 }
 

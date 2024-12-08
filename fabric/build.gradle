@@ -31,6 +31,10 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
     implementation project(path: ':common_loading_utils')
+
+    implementation 'com.electronwill.night-config:toml:3.6.4'
+    include group: 'com.electronwill.night-config', name: 'toml', version: '3.6.4'
+    include group: 'com.electronwill.night-config', name: 'core', version: '3.6.4'
 }
 
 processResources {

@@ -6,7 +6,6 @@ Shows a GUI after Minecraft crashes, immediately showing all affected game/launc
 
 ## Contributing:
 Use gradle `build` task of root project. Compiled jars can be found in: `build\libs`:
-* `app.jar` not needed in mods folder, just for debug of gui.
 * `crash_assistant-fabric-<version>.jar)` fabric mod.
 * `crash_assistant-forge-<version>.jar)` forge mod.
 
