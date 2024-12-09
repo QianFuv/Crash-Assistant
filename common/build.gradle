@@ -5,5 +5,4 @@ architectury {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
     implementation project(path: ':common_loading_utils')
-    // Included in forge_coremod. Coremod loaded classes are available for forge mods.
 }

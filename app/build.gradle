@@ -16,7 +16,7 @@ dependencies {
     implementation 'com.electronwill.night-config:toml:3.6.4'
     implementation 'gs.mclo:api:4.0.1'
 
-    compileOnly project(path: ':common_config')
+    implementation project(path: ':common_config')
 }
 
 jar {
@@ -38,7 +38,6 @@ shadowJar {
         exclude(dependency('com.electronwill.night-config:.*'))
         exclude(dependency('com.google.code.gson:.*'))
     }
-    from(project(':common_config').sourceSets.main.output)
 }
 
 build.finalizedBy(shadowJar)
