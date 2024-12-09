@@ -4,6 +4,7 @@ architectury {
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
     implementation project(path: ':common_loading_utils')
     implementation project(path: ':common_config')
 }

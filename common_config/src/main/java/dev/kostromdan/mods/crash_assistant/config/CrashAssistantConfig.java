@@ -42,7 +42,7 @@ public class CrashAssistantConfig {
                 "Oops, Minecraft crashed!");
         addOption("text.title_crashed_without_report",
                 "Title label text, then no crash report exists.",
-                "Oops, Minecraft crashed without any crash report!");
+                "Oops, Minecraft crashed without crash report!");
     }
 
     private static void addOption(String path, String comment, String defaultValue) {
