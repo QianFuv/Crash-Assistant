@@ -1,7 +1,3 @@
-architectury {
-    common rootProject.enabled_platforms.split(',')
-}
-
 dependencies {
     implementation 'com.electronwill.night-config:toml:3.6.4'
 }

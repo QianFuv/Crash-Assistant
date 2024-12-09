@@ -6,6 +6,7 @@ import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
@@ -19,18 +20,18 @@ public class ControlPanel {
         this.fileListPanel = fileListPanel;
 
         panel = new JPanel(new BorderLayout());
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel buttonPanel = new JPanel(new BorderLayout());
 
         uploadAllButton = new JButton("upload all and copy msg with links to all files");
         uploadAllButton.addActionListener(e -> uploadAllFiles());
 
         buttonPanel.add(uploadAllButton);
 
-        panel.add(buttonPanel, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.NORTH);
 
         JButton requestHelpButton = new JButton(CrashAssistantConfig.get("text.request_help_button").toString());
         requestHelpButton.addActionListener(e -> requestHelp());
-        panel.add(requestHelpButton, BorderLayout.EAST);
+        panel.add(requestHelpButton, BorderLayout.SOUTH);
     }
 
     public JPanel getPanel() {
@@ -39,7 +40,8 @@ public class ControlPanel {
 
     public void requestHelp() {
         try {
-            Desktop.getDesktop().browse(new URL(CrashAssistantConfig.get("general.help_link")).toURI());
+            URI uri = new URL(CrashAssistantConfig.get("general.help_link").toString()).toURI();
+            Desktop.getDesktop().browse(uri);
         } catch (Exception e) {
             CrashAssistantApp.LOGGER.error("Failed to open help_link in browser: ", e);
         }
@@ -91,7 +93,7 @@ public class ControlPanel {
 
                     }
                 }
-                generatedMsg = "Minecraft crashed!\n";
+                generatedMsg = CrashAssistantConfig.get("text.msg").toString();
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     generatedMsg += panel.getFileName() + ": " + panel.getUploadedLink() + "\n";
                 }

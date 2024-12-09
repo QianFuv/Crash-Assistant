@@ -6,9 +6,9 @@ import net.minecraft.ReportedException;
 import net.minecraft.util.NativeModuleLister;
 
 public interface ManualCrashThrower {
-    static void crashGame() {
-        CrashReport crashreport = new CrashReport("Manually triggered debug crash", new Throwable("Manually triggered debug crash"));
-        CrashReportCategory crashreportcategory = crashreport.addCategory("Manual crash details");
+    static void crashGame(String msg) {
+        CrashReport crashreport = new CrashReport(msg, new Throwable(msg));
+        CrashReportCategory crashreportcategory = crashreport.addCategory("Crash Assistant debug crash details");
         NativeModuleLister.addCrashSection(crashreportcategory);
         throw new ReportedException(crashreport);
     }

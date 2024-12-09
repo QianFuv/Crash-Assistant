@@ -14,11 +14,6 @@ import java.nio.file.Paths;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
-
-    static {
-//        ManualCrashThrower.crashGame(); // debug crash on mixin setup.
-    }
-
     /**
      * Minecraft.stop launches only on normal exit. This way we detect crashes without crash report or hs_err.
      */
