@@ -1,7 +1,6 @@
 package dev.kostromdan.mods.crash_assistant;
 
 import com.mojang.logging.LogUtils;
-import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
 import org.slf4j.Logger;
 
 public final class CrashAssistant {

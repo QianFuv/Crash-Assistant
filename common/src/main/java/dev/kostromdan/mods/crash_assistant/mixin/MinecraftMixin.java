@@ -1,7 +1,6 @@
 package dev.kostromdan.mods.crash_assistant.mixin;
 
 import dev.kostromdan.mods.crash_assistant.loading_utils.PIDHelper;
-import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

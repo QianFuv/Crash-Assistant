@@ -39,7 +39,7 @@ public class CrashReportsHelper {
      * This method scans the directory for files and returns their paths in a set.
      *
      * @return A set of paths representing all crash reports in the directory.
-     *         If the directory does not exist or an error occurs, an empty set is returned.
+     * If the directory does not exist or an error occurs, an empty set is returned.
      */
     public static HashSet<Path> getCrashReports() {
         HashSet<Path> locatedCrashReports = new HashSet<>();

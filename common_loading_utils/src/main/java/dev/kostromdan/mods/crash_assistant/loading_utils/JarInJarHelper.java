@@ -1,11 +1,11 @@
 package dev.kostromdan.mods.crash_assistant.loading_utils;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
+import com.electronwill.nightconfig.toml.TomlFormat;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Core;
-import com.google.gson.Gson;
-import com.electronwill.nightconfig.toml.TomlFormat;
-import com.electronwill.nightconfig.core.file.FileConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

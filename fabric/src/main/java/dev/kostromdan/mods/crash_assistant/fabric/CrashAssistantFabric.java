@@ -1,8 +1,7 @@
 package dev.kostromdan.mods.crash_assistant.fabric;
 
-import net.fabricmc.api.ModInitializer;
-
 import dev.kostromdan.mods.crash_assistant.CrashAssistant;
+import net.fabricmc.api.ModInitializer;
 
 public final class CrashAssistantFabric implements ModInitializer {
     @Override

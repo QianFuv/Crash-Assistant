@@ -1,7 +1,7 @@
 package dev.kostromdan.mods.crash_assistant.forge;
 
-import net.minecraftforge.fml.common.Mod;
 import dev.kostromdan.mods.crash_assistant.CrashAssistant;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod(CrashAssistant.MOD_ID)
 public final class CrashAssistantForge {

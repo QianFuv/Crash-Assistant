@@ -36,7 +36,7 @@ public class ControlPanel {
         return panel;
     }
 
-    public void joinDiscord(){
+    public void joinDiscord() {
         try {
             Desktop.getDesktop().browse(new URL("https://discord.gg/moddedmc").toURI());
         } catch (Exception e) {

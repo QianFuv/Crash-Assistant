@@ -53,7 +53,7 @@ shadowJar {
 remapJar {
     dependsOn(':app:shadowJar', ':common_loading_utils:build')
 
-    from(project(':app').tasks.shadowJar){
+    from(project(':app').tasks.shadowJar) {
         into 'META-INF/jarjar'
     }
     from(project(':common_loading_utils').sourceSets.main.output)

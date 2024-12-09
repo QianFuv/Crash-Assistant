@@ -26,7 +26,6 @@ public class Boot {
             }
         }
 
-
         CrashAssistantAgent.appendJarFile(log4jApi);
         CrashAssistantAgent.appendJarFile(log4jCore);
         CrashAssistantAgent.appendJarFile(googleGson);

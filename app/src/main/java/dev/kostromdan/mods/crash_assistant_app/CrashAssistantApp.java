@@ -32,7 +32,7 @@ public class CrashAssistantApp {
         }
 
         parentStarted = 0;
-        if (parentPID!=-1){
+        if (parentPID != -1) {
             Optional<Instant> time = PIDHelper.findProcessByPID(parentPID).info().startInstant();
             time.ifPresent(instant -> parentStarted = instant.toEpochMilli());
         }
@@ -81,8 +81,8 @@ public class CrashAssistantApp {
 
         FileUtils.addIfExistsAndModified(availableLogs, "CrashAssistant: latest.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
 
-        FileUtils.addIfExistsAndModified(availableLogs, "MinecraftLauncher: launcher_log.txt", Paths.get("launcher_log.txt" ));
-        FileUtils.addIfExistsAndModified(availableLogs, "CurseForge: launcher_log.txt", Paths.get("../../Install","launcher_log.txt" ));
+        FileUtils.addIfExistsAndModified(availableLogs, "MinecraftLauncher: launcher_log.txt", Paths.get("launcher_log.txt"));
+        FileUtils.addIfExistsAndModified(availableLogs, "CurseForge: launcher_log.txt", Paths.get("../../Install", "launcher_log.txt"));
         String appdata = System.getenv("APPDATA");
         if (appdata != null) {
             FileUtils.addIfExistsAndModified(availableLogs, "AtLauncher: atlauncher.log", Paths.get(appdata, "AtLauncher", "logs", "atlauncher.log"));
