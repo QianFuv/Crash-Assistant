@@ -29,7 +29,10 @@ public class CrashAssistantGUI {
         frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Oops, Minecraft crashed!", SwingConstants.LEFT);
+        String titleText = CrashAssistantApp.crashed_with_report ?
+                CrashAssistantConfig.get("text.title_crashed_with_report").toString() :
+                CrashAssistantConfig.get("text.title_crashed_without_report").toString();
+        JLabel titleLabel = new JLabel(titleText, SwingConstants.LEFT);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         frame.add(titleLabel, BorderLayout.NORTH);
 

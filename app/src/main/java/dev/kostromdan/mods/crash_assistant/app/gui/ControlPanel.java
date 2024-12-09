@@ -93,7 +93,7 @@ public class ControlPanel {
 
                     }
                 }
-                generatedMsg = CrashAssistantConfig.get("text.msg").toString();
+                generatedMsg = CrashAssistantConfig.get("text.msg").toString() + "\n";
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     generatedMsg += panel.getFileName() + ": " + panel.getUploadedLink() + "\n";
                 }

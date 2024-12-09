@@ -18,6 +18,8 @@ public class CrashAssistantApp {
     public static final MclogsClient MCLogsClient = new MclogsClient("CrashAssistant");
     public static long parentPID;
     public static long parentStarted;
+    public static boolean crashed_with_report = false;
+
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -71,7 +73,6 @@ public class CrashAssistantApp {
     private static void onMinecraftFinished() {
         CrashAssistantConfig c = new CrashAssistantConfig();
         boolean crashed = false;
-        boolean crashed_with_report = false;
         SortedMap<String, Path> availableLogs = new TreeMap<>(new LogsComparator());
 
         FileUtils.addIfExistsAndModified(availableLogs, Paths.get("logs", "latest.log"));

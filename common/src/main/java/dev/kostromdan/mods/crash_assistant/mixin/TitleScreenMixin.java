@@ -13,12 +13,6 @@ import java.util.Objects;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
-    static {
-        if (Objects.equals(CrashAssistantConfig.get("debug.crash_game_on_event").toString(), "MIXIN_SETUP")) {
-            ManualCrashThrower.crashGame("Debug crash from Crash Assistant mod. 'debug.crash_game_on_event' value of '" + CrashAssistantConfig.getConfigPath() + "' set to 'MIXIN_SETUP'.");
-        }
-    }
-
     @Inject(method = "tick", at = @At("RETURN"), cancellable = false)
     private void onClientLoaded(CallbackInfo ci) {
         if (CrashAssistant.clientLoaded) {
