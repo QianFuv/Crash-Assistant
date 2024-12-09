@@ -46,6 +46,9 @@ public class CrashAssistantGUI {
         frame.setSize(Math.max(fileListPanel.getFileListPanel().getPreferredSize().width, controlPanel.getPanel().getPreferredSize().width) + 26, frame.getHeight());
 
         frame.setVisible(true);
+
+        frame.toFront();
+        frame.requestFocus();
     }
 
     private void runBeforeClose() {
