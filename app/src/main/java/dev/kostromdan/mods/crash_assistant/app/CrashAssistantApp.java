@@ -1,6 +1,7 @@
-package dev.kostromdan.mods.crash_assistant_app;
+package dev.kostromdan.mods.crash_assistant.app;
 
-import dev.kostromdan.mods.crash_assistant_app.utils.*;
+import dev.kostromdan.mods.crash_assistant.app.utils.*;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import gs.mclo.api.MclogsClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,6 +69,7 @@ public class CrashAssistantApp {
     }
 
     private static void onMinecraftFinished() {
+        CrashAssistantConfig c = new CrashAssistantConfig();
         boolean crashed = false;
         boolean crashed_with_report = false;
         SortedMap<String, Path> availableLogs = new TreeMap<>(new LogsComparator());
@@ -75,9 +77,9 @@ public class CrashAssistantApp {
         FileUtils.addIfExistsAndModified(availableLogs, Paths.get("logs", "latest.log"));
         FileUtils.addIfExistsAndModified(availableLogs, Paths.get("logs", "debug.log"));
 
-        FileUtils.addIfExistsAndModified(availableLogs, "kubejs/client.log", Paths.get("logs", "kubejs", "client.log"));
-        FileUtils.addIfExistsAndModified(availableLogs, "kubejs/server.log", Paths.get("logs", "kubejs", "server.log"));
-        FileUtils.addIfExistsAndModified(availableLogs, "kubejs/startup.log", Paths.get("logs", "kubejs", "startup.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, "KubeJS: client.log", Paths.get("logs", "kubejs", "client.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, "KubeJS: server.log", Paths.get("logs", "kubejs", "server.log"));
+        FileUtils.addIfExistsAndModified(availableLogs, "KubeJS: startup.log", Paths.get("logs", "kubejs", "startup.log"));
 
         FileUtils.addIfExistsAndModified(availableLogs, "CrashAssistant: latest.log", Paths.get("local", "crash_assistant", "logs", "latest.log"));
 

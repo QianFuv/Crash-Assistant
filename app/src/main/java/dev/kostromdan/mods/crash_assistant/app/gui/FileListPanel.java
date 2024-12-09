@@ -1,4 +1,4 @@
-package dev.kostromdan.mods.crash_assistant_app.gui;
+package dev.kostromdan.mods.crash_assistant.app.gui;
 
 import javax.swing.*;
 import java.nio.file.Path;

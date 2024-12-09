@@ -1,8 +1,8 @@
-package dev.kostromdan.mods.crash_assistant_app.gui;
+package dev.kostromdan.mods.crash_assistant.app.gui;
 
-import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
-import dev.kostromdan.mods.crash_assistant_app.exceptions.UploadException;
-import dev.kostromdan.mods.crash_assistant_app.utils.ClipboardUtils;
+import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant.app.exceptions.UploadException;
+import dev.kostromdan.mods.crash_assistant.app.utils.ClipboardUtils;
 import gs.mclo.api.response.UploadLogResponse;
 
 import javax.swing.*;

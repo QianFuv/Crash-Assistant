@@ -1,4 +1,4 @@
-package dev.kostromdan.mods.crash_assistant_app.class_loading;
+package dev.kostromdan.mods.crash_assistant.app.class_loading;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +32,7 @@ public class Boot {
         CrashAssistantAgent.appendJarFile(nightConfigCore);
         CrashAssistantAgent.appendJarFile(nightConfigToml);
 
-        Class<?> crashAssistantAppClass = Class.forName("dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp");
+        Class<?> crashAssistantAppClass = Class.forName("dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp");
         Method mainMethod = crashAssistantAppClass.getMethod("main", String[].class);
         mainMethod.invoke(null, (Object) args);
     }

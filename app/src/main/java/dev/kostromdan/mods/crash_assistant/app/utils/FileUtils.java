@@ -1,6 +1,6 @@
-package dev.kostromdan.mods.crash_assistant_app.utils;
+package dev.kostromdan.mods.crash_assistant.app.utils;
 
-import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -29,7 +29,7 @@ public interface FileUtils {
 
     static void addIfExistsAndModified(Map<String, Path> map, String fileName, Path path, boolean checkModified) {
         if (Files.exists(path) && Files.isRegularFile(path)) {
-            if (checkModified && path.toFile().lastModified() < CrashAssistantApp.parentStarted) {
+            if (checkModified && path.toFile().lastModified() <= CrashAssistantApp.parentStarted) {
                 return;
             }
             try {

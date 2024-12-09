@@ -1,6 +1,6 @@
-package dev.kostromdan.mods.crash_assistant_app.utils;
+package dev.kostromdan.mods.crash_assistant.app.utils;
 
-import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
 
 import java.io.IOException;
 import java.nio.file.Files;

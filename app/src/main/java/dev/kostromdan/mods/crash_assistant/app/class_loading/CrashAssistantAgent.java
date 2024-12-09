@@ -1,4 +1,4 @@
-package dev.kostromdan.mods.crash_assistant_app.class_loading;
+package dev.kostromdan.mods.crash_assistant.app.class_loading;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;

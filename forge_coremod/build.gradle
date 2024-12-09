@@ -17,6 +17,7 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
     implementation project(path: ':common_loading_utils')
+    implementation project(path: ':common_config')
 }
 
 processResources {
@@ -45,6 +46,7 @@ remapJar {
         into 'META-INF/jarjar'
     }
     from(project(':common_loading_utils').sourceSets.main.output)
+    from(project(':common_config').sourceSets.main.output)
 
     input.set shadowJar.archiveFile
 }

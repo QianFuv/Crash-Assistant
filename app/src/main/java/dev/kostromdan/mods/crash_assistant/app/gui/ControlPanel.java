@@ -1,7 +1,8 @@
-package dev.kostromdan.mods.crash_assistant_app.gui;
+package dev.kostromdan.mods.crash_assistant.app.gui;
 
-import dev.kostromdan.mods.crash_assistant_app.CrashAssistantApp;
-import dev.kostromdan.mods.crash_assistant_app.utils.ClipboardUtils;
+import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant.app.utils.ClipboardUtils;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,20 +28,20 @@ public class ControlPanel {
 
         panel.add(buttonPanel, BorderLayout.CENTER);
 
-        JButton joinDiscordButton = new JButton("request help in our Discord");
-        joinDiscordButton.addActionListener(e -> joinDiscord());
-        panel.add(joinDiscordButton, BorderLayout.EAST);
+        JButton requestHelpButton = new JButton(CrashAssistantConfig.get("text.request_help_button").toString());
+        requestHelpButton.addActionListener(e -> requestHelp());
+        panel.add(requestHelpButton, BorderLayout.EAST);
     }
 
     public JPanel getPanel() {
         return panel;
     }
 
-    public void joinDiscord() {
+    public void requestHelp() {
         try {
-            Desktop.getDesktop().browse(new URL("https://discord.gg/moddedmc").toURI());
+            Desktop.getDesktop().browse(new URL(CrashAssistantConfig.get("general.help_link")).toURI());
         } catch (Exception e) {
-            CrashAssistantApp.LOGGER.error("Failed to open Discord invite link: ", e);
+            CrashAssistantApp.LOGGER.error("Failed to open help_link in browser: ", e);
         }
     }
 

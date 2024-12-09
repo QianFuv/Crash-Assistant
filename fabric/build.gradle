@@ -31,6 +31,7 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
     implementation project(path: ':common_loading_utils')
+    implementation project(path: ':common_config')
 
     implementation 'com.electronwill.night-config:toml:3.6.4'
     include group: 'com.electronwill.night-config', name: 'toml', version: '3.6.4'
@@ -57,6 +58,7 @@ remapJar {
         into 'META-INF/jarjar'
     }
     from(project(':common_loading_utils').sourceSets.main.output)
+    from(project(':common_config').sourceSets.main.output)
 
     input.set shadowJar.archiveFile
 }

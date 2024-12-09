@@ -1,4 +1,4 @@
-package dev.kostromdan.mods.crash_assistant_app.exceptions;
+package dev.kostromdan.mods.crash_assistant.app.exceptions;
 
 public class UploadException extends RuntimeException {
     public UploadException(String message) {

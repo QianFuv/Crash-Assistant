@@ -1,4 +1,4 @@
-package dev.kostromdan.mods.crash_assistant_app.utils;
+package dev.kostromdan.mods.crash_assistant.app.utils;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
