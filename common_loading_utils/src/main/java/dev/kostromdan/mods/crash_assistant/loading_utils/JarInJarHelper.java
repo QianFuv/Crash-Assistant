@@ -28,59 +28,25 @@ public interface JarInJarHelper {
 
             ProcessHandle currentProcess = ProcessHandle.current();
             Optional<String> javaBinary = currentProcess.info().command();
-
             if (javaBinary.isEmpty()) {
                 throw new IllegalStateException("Unable to determine the java binary path of current JVM. Crash Assistant won't work.");
             }
 
-
-            Path log4jApi;
-            try {
-                log4jApi = LibrariesJarLocator.getLibraryJarPath(LogManager.class);
-            } catch (Exception e) {
-                LOGGER.error("Unable to determine the log4jApi '.jar' path, Crash Assistant won't work.", e);
-                return;
-            }
-            Path log4jCore;
-            try {
-                log4jCore = LibrariesJarLocator.getLibraryJarPath(Core.class);
-            } catch (Exception e) {
-                LOGGER.error("Unable to determine the log4jCore '.jar' path, Crash Assistant won't work.", e);
-                return;
-            }
-
-            Path googleGson;
-            try {
-                googleGson = LibrariesJarLocator.getLibraryJarPath(Gson.class);
-            } catch (Exception e) {
-                LOGGER.error("Unable to determine the googleGson '.jar' path, Crash Assistant won't work.", e);
-                return;
-            }
-
-            Path nightConfigCore;
-            try {
-                nightConfigCore = LibrariesJarLocator.getLibraryJarPath(FileConfig.class);
-            } catch (Exception e) {
-                LOGGER.error("Unable to determine the nightConfigCore '.jar' path, Crash Assistant won't work.", e);
-                return;
-            }
-            Path nightConfigToml;
-            try {
-                nightConfigToml = LibrariesJarLocator.getLibraryJarPath(TomlFormat.class);
-            } catch (Exception e) {
-                LOGGER.error("Unable to determine the nightConfigToml '.jar' path, Crash Assistant won't work.", e);
-                return;
-            }
-
             ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
-                    javaBinary.get(), "-jar", extractedJarPath.toAbsolutePath().toString(),
+                    javaBinary.get(),
+                    "-XX:+UseG1GC",
+                    "-XX:MaxHeapFreeRatio=30",
+                    "-XX:MinHeapFreeRatio=10",
+                    "-XX:MaxGCPauseMillis=10000",
+                    "-Xms8m",
+                    "-Xmx256m",
+                    "-jar", extractedJarPath.toAbsolutePath().toString(),
                     "-parentPID", PIDHelper.getCurrentProcessID(),
-                    "-log4jApi", log4jApi.toAbsolutePath().toString(),
-                    "-log4jCore", log4jCore.toAbsolutePath().toString(),
-                    "-googleGson", googleGson.toAbsolutePath().toString(),
-                    "-nightConfigCore", nightConfigCore.toAbsolutePath().toString(),
-                    "-nightConfigToml", nightConfigToml.toAbsolutePath().toString(),
-                    "-Xmx1024m"
+                    "-log4jApi", LibrariesJarLocator.getLibraryJarPath(LogManager.class),
+                    "-log4jCore", LibrariesJarLocator.getLibraryJarPath(Core.class),
+                    "-googleGson", LibrariesJarLocator.getLibraryJarPath(Gson.class),
+                    "-nightConfigCore", LibrariesJarLocator.getLibraryJarPath(FileConfig.class),
+                    "-nightConfigToml", LibrariesJarLocator.getLibraryJarPath(TomlFormat.class)
             );
             crashAssistantAppProcess.start();
 

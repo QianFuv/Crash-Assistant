@@ -1,21 +1,27 @@
 package dev.kostromdan.mods.crash_assistant.app;
 
-import dev.kostromdan.mods.crash_assistant.app.utils.*;
-import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
-import gs.mclo.api.MclogsClient;
+import dev.kostromdan.mods.crash_assistant.app.utils.CrashReportsHelper;
+import dev.kostromdan.mods.crash_assistant.app.utils.FileUtils;
+import dev.kostromdan.mods.crash_assistant.app.utils.HsErrHelper;
+import dev.kostromdan.mods.crash_assistant.app.utils.LogsComparator;
+import dev.kostromdan.mods.crash_assistant.app.utils.PIDHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 public class CrashAssistantApp {
     public static final Logger LOGGER = LogManager.getLogger(CrashAssistantApp.class);
-    public static final MclogsClient MCLogsClient = new MclogsClient("CrashAssistant");
     public static long parentPID;
     public static long parentStarted;
     public static boolean crashed_with_report = false;
@@ -60,7 +66,7 @@ public class CrashAssistantApp {
                     onMinecraftFinished();
                     return;
                 }
-
+                System.gc();
                 TimeUnit.SECONDS.sleep(1);
 
             } catch (Exception e) {
@@ -71,7 +77,6 @@ public class CrashAssistantApp {
     }
 
     private static void onMinecraftFinished() {
-        CrashAssistantConfig c = new CrashAssistantConfig();
         boolean crashed = false;
         SortedMap<String, Path> availableLogs = new TreeMap<>(new LogsComparator());
 
@@ -133,6 +138,12 @@ public class CrashAssistantApp {
 
 
     public static void startApp(Map<String, Path> availableLogs) {
-        new CrashAssistantGUI(availableLogs);
+        try {
+            Class<?> clazz = Class.forName("dev.kostromdan.mods.crash_assistant.app.gui.CrashAssistantGUI");
+            Constructor<?> constructor = clazz.getConstructor(Map.class);
+            constructor.newInstance(availableLogs);
+        } catch (Exception e) {
+            LOGGER.error("Exception while starting gui:", e);
+        }
     }
 }

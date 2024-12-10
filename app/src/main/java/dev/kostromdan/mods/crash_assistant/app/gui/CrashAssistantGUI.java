@@ -1,8 +1,8 @@
-package dev.kostromdan.mods.crash_assistant.app;
+package dev.kostromdan.mods.crash_assistant.app.gui;
 
-import dev.kostromdan.mods.crash_assistant.app.gui.ControlPanel;
-import dev.kostromdan.mods.crash_assistant.app.gui.FileListPanel;
+import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import gs.mclo.api.MclogsClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class CrashAssistantGUI {
+    public static final MclogsClient MCLogsClient = new MclogsClient("CrashAssistant");
     private final JFrame frame;
     private final FileListPanel fileListPanel;
     private final ControlPanel controlPanel;
