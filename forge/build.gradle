@@ -5,6 +5,7 @@ plugins {
 loom {
     forge {
         mixinConfig "crash_assistant.mixins.json"
+        mixinConfig "crash_assistant-forge.mixins.json"
     }
 }
 

@@ -5,6 +5,7 @@ import dev.kostromdan.mods.crash_assistant.app.utils.FileUtils;
 import dev.kostromdan.mods.crash_assistant.app.utils.HsErrHelper;
 import dev.kostromdan.mods.crash_assistant.app.utils.LogsComparator;
 import dev.kostromdan.mods.crash_assistant.app.utils.PIDHelper;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,6 +51,7 @@ public class CrashAssistantApp {
         CrashReportsHelper.cacheKnownCrashReports();
         HsErrHelper.removeHsErrLog(parentPID);
 
+
         while (true) {
             try {
                 if (!PIDHelper.isProcessAlive(parentPID)) {
@@ -61,11 +63,21 @@ public class CrashAssistantApp {
                 HashSet<Path> newCrashReports = CrashReportsHelper.scanForNewCrashReports();
                 if (!newCrashReports.isEmpty()) {
                     LOGGER.info("Detected new crash report(s), awaiting for {} PID finished.", parentPID);
-                    ProcessHandle.of(parentPID).get().onExit().get(); // wait until Minecraft jvm finished.
+                    while (ProcessHandle.of(parentPID).isPresent()){
+                        if (checkLoadingErrorScreen()){
+                            return;
+                        }
+                        TimeUnit.MILLISECONDS.sleep(100);
+                    }
                     LOGGER.info("PID \"{}\" is not alive. Minecraft JVM appears to have stopped.", parentPID);
                     onMinecraftFinished();
                     return;
                 }
+
+                if (checkLoadingErrorScreen()){
+                    return;
+                }
+
                 System.gc();
                 TimeUnit.SECONDS.sleep(1);
 
@@ -74,6 +86,19 @@ public class CrashAssistantApp {
                 break;
             }
         }
+    }
+
+    private static boolean checkLoadingErrorScreen(){
+        Path loadingErrorFML = Paths.get("local", "crash_assistant", "loading_error_fml" + parentPID + ".tmp");
+
+        if(loadingErrorFML.toFile().exists()) {
+            LOGGER.info("Detected FML error modloading screen.");
+            if(CrashAssistantConfig.get("general.show_on_fml_error_screen")){
+                onMinecraftFinished();
+            }
+            return true;
+        }
+        return false;
     }
 
     private static void onMinecraftFinished() {

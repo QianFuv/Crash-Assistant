@@ -1,7 +1,6 @@
 package dev.kostromdan.mods.crash_assistant.mixin;
 
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
-import dev.kostromdan.mods.crash_assistant.loading_utils.PIDHelper;
 import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +27,7 @@ public class MinecraftMixin {
      */
     @Inject(method = "stop", at = @At("RETURN"), cancellable = false)
     private void stop(CallbackInfo ci) {
-        String normalStopFileName = "normal_stop_pid" + PIDHelper.getCurrentProcessID() + ".tmp";
+        String normalStopFileName = "normal_stop_pid" + ProcessHandle.current().pid() + ".tmp";
         Path normalStopFilePath = Paths.get("local", "crash_assistant", normalStopFileName);
         try {
             Files.write(normalStopFilePath, Long.toString(System.currentTimeMillis()).getBytes());

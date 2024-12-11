@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public interface JarInJarHelper {
@@ -41,7 +42,7 @@ public interface JarInJarHelper {
                     "-Xms8m",
                     "-Xmx256m",
                     "-jar", extractedJarPath.toAbsolutePath().toString(),
-                    "-parentPID", PIDHelper.getCurrentProcessID(),
+                    "-parentPID", Objects.toString(ProcessHandle.current().pid()),
                     "-log4jApi", LibrariesJarLocator.getLibraryJarPath(LogManager.class),
                     "-log4jCore", LibrariesJarLocator.getLibraryJarPath(Core.class),
                     "-googleGson", LibrariesJarLocator.getLibraryJarPath(Gson.class),
