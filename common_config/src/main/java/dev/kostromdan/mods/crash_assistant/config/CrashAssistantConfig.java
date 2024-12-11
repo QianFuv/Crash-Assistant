@@ -11,7 +11,7 @@ public class CrashAssistantConfig {
     private static final CommentedFileConfig config;
 
     static {
-        CONFIG_PATH.toFile().mkdirs();
+        CONFIG_PATH.getParent().toFile().mkdirs();
         config = CommentedFileConfig.builder(CONFIG_PATH).preserveInsertionOrder().autosave().autoreload().build();
         setupDefaultValues();
     }
