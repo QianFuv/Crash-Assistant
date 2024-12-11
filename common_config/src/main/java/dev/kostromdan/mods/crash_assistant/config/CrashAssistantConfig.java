@@ -12,7 +12,7 @@ public class CrashAssistantConfig {
 
     static {
         CONFIG_PATH.getParent().toFile().mkdirs();
-        config = CommentedFileConfig.builder(CONFIG_PATH).preserveInsertionOrder().autosave().autoreload().build();
+        config = CommentedFileConfig.builder(CONFIG_PATH).preserveInsertionOrder().autosave().build();
         setupDefaultValues();
     }
 
