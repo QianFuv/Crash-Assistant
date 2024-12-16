@@ -24,3 +24,4 @@ run
 local
 *.architectury-transformer
 /config/
+/logs/

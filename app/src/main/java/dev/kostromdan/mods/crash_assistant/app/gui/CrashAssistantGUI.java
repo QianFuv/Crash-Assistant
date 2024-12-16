@@ -20,12 +20,6 @@ public class CrashAssistantGUI {
     public CrashAssistantGUI(Map<String, Path> availableLogs) {
         frame = new JFrame("Crash Assistant");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                runBeforeClose();
-            }
-        });
 
         frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
@@ -53,10 +47,6 @@ public class CrashAssistantGUI {
 
         frame.toFront();
         frame.requestFocus();
-    }
-
-    private void runBeforeClose() {
-        CrashAssistantConfig.onExit();
     }
 }
 

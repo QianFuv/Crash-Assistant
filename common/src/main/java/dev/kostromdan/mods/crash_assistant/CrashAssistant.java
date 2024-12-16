@@ -5,9 +5,15 @@ import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import dev.kostromdan.mods.crash_assistant.commands.CrashAssistantCommands;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
+import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
+
+import java.util.Objects;
 
 public final class CrashAssistant {
     public static final String MOD_ID = "crash_assistant";
@@ -16,6 +22,10 @@ public final class CrashAssistant {
 
 
     public static void init() {
+        if (Objects.equals(CrashAssistantConfig.get("debug.crash_game_on_event").toString(), "MOD_LOADING")) {
+            ManualCrashThrower.crashGame("Debug crash from Crash Assistant mod. 'debug.crash_game_on_event' value of '" + CrashAssistantConfig.getConfigPath() + "' set to 'MOD_LOADING'.");
+        }
+
         EnvExecutor.runInEnv(Env.CLIENT, () -> CrashAssistant.Client::initializeClient);
     }
 
@@ -24,6 +34,17 @@ public final class CrashAssistant {
         @Environment(EnvType.CLIENT)
         public static void initializeClient() {
             ClientCommandRegistrationEvent.EVENT.register(CrashAssistantCommands::register);
+
+            if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
+                String userUUID = Minecraft.getInstance().getUser().getUuid();
+                if (CrashAssistantConfig.getModpackCreators().isEmpty()) {
+                    CrashAssistantConfig.addModpackCreator(userUUID);
+                }
+                if ((Boolean) CrashAssistantConfig.get("modpack_modlist.auto_update") &&
+                        CrashAssistantConfig.getModpackCreators().contains(userUUID)) {
+                    ModListUtils.save();
+                }
+            }
         }
     }
 }
