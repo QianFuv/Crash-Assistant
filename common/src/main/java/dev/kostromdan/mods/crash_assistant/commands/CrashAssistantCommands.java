@@ -69,6 +69,7 @@ public class CrashAssistantCommands {
                                             LocalPlayer player = Minecraft.getInstance().player;
                                             MutableComponent msg = Component.empty();
                                             ModListDiff diff = ModListUtils.getDiff();
+
                                             msg.append(Component.literal("Added mods: \n").withStyle(style -> style.withColor(ChatFormatting.DARK_GREEN)));
                                             if (!diff.addedMods().isEmpty()) {
                                                 msg.append(Component.literal(String.join("\n", diff.addedMods())).withStyle(style -> style.withColor(ChatFormatting.GREEN)));
@@ -76,12 +77,14 @@ public class CrashAssistantCommands {
                                                 msg.append(Component.literal("Added mods not found!").withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
                                             }
                                             msg.append(Component.literal("\n"));
+
                                             msg.append(Component.literal("Removed mods: \n").withStyle(style -> style.withColor(ChatFormatting.DARK_RED)));
                                             if (!diff.removedMods().isEmpty()) {
                                                 msg.append(Component.literal(String.join("\n", diff.removedMods())).withStyle(style -> style.withColor(ChatFormatting.RED)));
                                             } else {
                                                 msg.append(Component.literal("Removed mods not found!").withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
                                             }
+
                                             player.sendSystemMessage(msg);
                                             return 0;
                                         }
