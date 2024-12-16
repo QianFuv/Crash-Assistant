@@ -3,6 +3,7 @@ package dev.kostromdan.mods.crash_assistant.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import dev.kostromdan.mods.crash_assistant.mod_list.ModListDiff;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -37,11 +38,11 @@ public class CrashAssistantCommands {
                                             MutableComponent msg = Component.empty();
 
                                             if (CrashAssistantConfig.getModpackCreators().contains(UUID)) {
-                                                ModListUtils.save();
+                                                ModListUtils.saveCurrentModList();
                                                 msg.append(Component.literal("Modpack modlist overwritten successfully!\n"));
                                                 if (CrashAssistantConfig.get("modpack_modlist.auto_update")) {
                                                     msg.append(Component.literal("You actually don't need to perform this command, " +
-                                                            "since auto update feature is enabled in ")
+                                                                    "since auto update feature is enabled in ")
                                                             .withStyle(style -> style.withColor(ChatFormatting.WHITE)));
                                                 } else {
                                                     msg.append(Component.literal("You can always enable automatic modlist overwriting in\n")
@@ -60,6 +61,28 @@ public class CrashAssistantCommands {
                                             }
                                             player.sendSystemMessage(msg);
 
+                                            return 0;
+                                        }
+                                )
+                        ).then(ClientCommandRegistrationEvent.literal("diff")
+                                .executes(context -> {
+                                            LocalPlayer player = Minecraft.getInstance().player;
+                                            MutableComponent msg = Component.empty();
+                                            ModListDiff diff = ModListUtils.getDiff();
+                                            msg.append(Component.literal("Added mods: \n").withStyle(style -> style.withColor(ChatFormatting.DARK_GREEN)));
+                                            if (!diff.addedMods().isEmpty()) {
+                                                msg.append(Component.literal(String.join("\n", diff.addedMods())).withStyle(style -> style.withColor(ChatFormatting.GREEN)));
+                                            } else {
+                                                msg.append(Component.literal("Added mods not found!").withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
+                                            }
+                                            msg.append(Component.literal("\n"));
+                                            msg.append(Component.literal("Removed mods: \n").withStyle(style -> style.withColor(ChatFormatting.DARK_RED)));
+                                            if (!diff.removedMods().isEmpty()) {
+                                                msg.append(Component.literal(String.join("\n", diff.removedMods())).withStyle(style -> style.withColor(ChatFormatting.RED)));
+                                            } else {
+                                                msg.append(Component.literal("Removed mods not found!").withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
+                                            }
+                                            player.sendSystemMessage(msg);
                                             return 0;
                                         }
                                 )

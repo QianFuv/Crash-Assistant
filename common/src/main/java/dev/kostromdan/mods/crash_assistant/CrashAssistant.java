@@ -38,7 +38,7 @@ public final class CrashAssistant {
                 }
                 if ((Boolean) CrashAssistantConfig.get("modpack_modlist.auto_update") &&
                         CrashAssistantConfig.getModpackCreators().contains(userUUID)) {
-                    ModListUtils.save();
+                    ModListUtils.saveCurrentModList();
                 }
             }
             if (Objects.equals(CrashAssistantConfig.get("debug.crash_game_on_event").toString(), "MOD_LOADING")) {
