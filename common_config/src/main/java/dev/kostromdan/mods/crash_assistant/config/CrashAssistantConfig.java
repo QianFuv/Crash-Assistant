@@ -40,6 +40,12 @@ public class CrashAssistantConfig {
                 "Show gui on minecraft crashed on modloading and FML error screen displayed.",
                 true);
 
+        ArrayList<String> defaultBlacklistedLogs = new ArrayList<>();
+        defaultBlacklistedLogs.add("CrashAssistant: latest.log");
+        addOption("general.blacklisted_logs",
+                "List of blacklisted log files. This files won't show in GUI logs list.",
+                defaultBlacklistedLogs);
+
         config.setComment("debug", "Here you can configure debug options for easier configuration of the mod.");
         addOption("debug.crash_game_on_event",
                 "Setting this value to one of listed here, will crash the game in order to show/debug gui.\n" +
@@ -62,6 +68,12 @@ public class CrashAssistantConfig {
         addOption("text.title_crashed_without_report",
                 "Title label text, then no crash report exists.",
                 "Oops, Minecraft crashed without crash report!");
+        addOption("text.comment_under_title",
+                "Comment text under title.",
+                "We regret that Minecraft has crashed. Below are a few options to resolve this issue.\n" +
+                        "You can see the list of available logs, with according action buttons.\n" +
+                        "If you are unsure what to do with this, you can join the Modded Minecraft Discord.\n" +
+                        "Simply post generated message by the button at the bottom in player_help channel.");
 
         config.setComment("modpack_modlist", "Settings of modlist feature.\n" +
                 "Adds in generated msg block about which mods modpack user added/removed/updated.");
@@ -87,6 +99,10 @@ public class CrashAssistantConfig {
             LOGGER.warn("Error while reading config param: '" + path + "'. Current value class:'" + config.get(path).getClass().getName() + "' is not equal to needed:'" + defaultValue.getClass().getName() + "'. Resetting to default!");
             config.set(path, defaultValue);
         }
+    }
+
+    public static ArrayList<String> getBlacklistedLogs() {
+        return get("general.blacklisted_logs");
     }
 
     public static ArrayList<String> getModpackCreators() {

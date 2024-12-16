@@ -1,6 +1,7 @@
 package dev.kostromdan.mods.crash_assistant.app.utils;
 
 import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -29,6 +30,9 @@ public interface FileUtils {
 
     static void addIfExistsAndModified(Map<String, Path> map, String fileName, Path path, boolean checkModified) {
         if (Files.exists(path) && Files.isRegularFile(path)) {
+            if (CrashAssistantConfig.getBlacklistedLogs().contains(fileName)) {
+                return;
+            }
             if (checkModified && path.toFile().lastModified() <= CrashAssistantApp.parentStarted) {
                 return;
             }

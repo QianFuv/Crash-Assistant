@@ -6,8 +6,6 @@ import gs.mclo.api.MclogsClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -29,7 +27,17 @@ public class CrashAssistantGUI {
                 CrashAssistantConfig.get("text.title_crashed_without_report").toString();
         JLabel titleLabel = new JLabel(titleText, SwingConstants.LEFT);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        frame.add(titleLabel, BorderLayout.NORTH);
+
+        String commentText = CrashAssistantConfig.get("text.comment_under_title").toString();
+        JLabel commentLabel = new JLabel("<html>" + commentText.replaceAll("\n", "<br>") + "</html>");
+        commentLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        JPanel labelPanel = new JPanel();
+        labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
+        labelPanel.add(titleLabel);
+        labelPanel.add(commentLabel);
+
+        frame.add(labelPanel, BorderLayout.NORTH);
 
         fileListPanel = new FileListPanel();
         frame.add(fileListPanel.getScrollPane(), BorderLayout.CENTER);
@@ -49,4 +57,6 @@ public class CrashAssistantGUI {
         frame.requestFocus();
     }
 }
+
+
 
