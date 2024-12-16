@@ -2,11 +2,13 @@ package dev.kostromdan.mods.crash_assistant.mod_list;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,7 +46,8 @@ public class ModListUtils {
         try {
             if (Files.exists(JSON_FILE)) {
                 String json = new String(Files.readAllBytes(JSON_FILE));
-                return GSON.fromJson(json, HashSet.class);
+                Type setType = new TypeToken<HashSet<String>>() {}.getType();
+                return GSON.fromJson(json, setType);
             }
         } catch (IOException e) {
             LOGGER.error("Error while getting Modlist", e);
