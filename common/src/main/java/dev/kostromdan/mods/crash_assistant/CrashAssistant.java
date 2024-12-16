@@ -22,10 +22,6 @@ public final class CrashAssistant {
 
 
     public static void init() {
-        if (Objects.equals(CrashAssistantConfig.get("debug.crash_game_on_event").toString(), "MOD_LOADING")) {
-            ManualCrashThrower.crashGame("Debug crash from Crash Assistant mod. 'debug.crash_game_on_event' value of '" + CrashAssistantConfig.getConfigPath() + "' set to 'MOD_LOADING'.");
-        }
-
         EnvExecutor.runInEnv(Env.CLIENT, () -> CrashAssistant.Client::initializeClient);
     }
 
@@ -44,6 +40,9 @@ public final class CrashAssistant {
                         CrashAssistantConfig.getModpackCreators().contains(userUUID)) {
                     ModListUtils.save();
                 }
+            }
+            if (Objects.equals(CrashAssistantConfig.get("debug.crash_game_on_event").toString(), "MOD_LOADING")) {
+                ManualCrashThrower.crashGame("Debug crash from Crash Assistant mod. 'debug.crash_game_on_event' value of '" + CrashAssistantConfig.getConfigPath() + "' set to 'MOD_LOADING'.");
             }
         }
     }

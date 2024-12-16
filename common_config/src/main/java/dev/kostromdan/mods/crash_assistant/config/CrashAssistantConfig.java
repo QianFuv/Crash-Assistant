@@ -73,7 +73,8 @@ public class CrashAssistantConfig {
                         "Only this players can overwrite modlist.json",
                 new ArrayList<String>());
         addOption("modpack_modlist.auto_update",
-                "If enabled, modlist.json will be overwritten on every launch, then player is modpack creator.\n" +
+                "If enabled, modlist.json will be overwritten on every launch(mod loading),\n" +
+                        "then game is launched by modpack creator.\n" +
                         "So you won't forget to save it before publishing.",
                 true);
     }

@@ -41,7 +41,7 @@ public class CrashAssistantCommands {
                                                 msg.append(Component.literal("Modpack modlist overwritten successfully!\n"));
                                                 if (CrashAssistantConfig.get("modpack_modlist.auto_update")) {
                                                     msg.append(Component.literal("You actually don't need to perform this command, " +
-                                                            "since auto update feature is enabled in \n")
+                                                            "since auto update feature is enabled in ")
                                                             .withStyle(style -> style.withColor(ChatFormatting.WHITE)));
                                                 } else {
                                                     msg.append(Component.literal("You can always enable automatic modlist overwriting in\n")
