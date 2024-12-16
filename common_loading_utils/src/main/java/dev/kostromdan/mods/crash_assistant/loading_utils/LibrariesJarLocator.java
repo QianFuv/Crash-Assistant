@@ -1,6 +1,5 @@
 package dev.kostromdan.mods.crash_assistant.loading_utils;
 
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;

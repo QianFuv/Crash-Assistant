@@ -63,8 +63,8 @@ public class CrashAssistantApp {
                 HashSet<Path> newCrashReports = CrashReportsHelper.scanForNewCrashReports();
                 if (!newCrashReports.isEmpty()) {
                     LOGGER.info("Detected new crash report(s), awaiting for {} PID finished.", parentPID);
-                    while (ProcessHandle.of(parentPID).isPresent()){
-                        if (checkLoadingErrorScreen()){
+                    while (ProcessHandle.of(parentPID).isPresent()) {
+                        if (checkLoadingErrorScreen()) {
                             return;
                         }
                         TimeUnit.MILLISECONDS.sleep(100);
@@ -74,7 +74,7 @@ public class CrashAssistantApp {
                     return;
                 }
 
-                if (checkLoadingErrorScreen()){
+                if (checkLoadingErrorScreen()) {
                     return;
                 }
 
@@ -88,12 +88,12 @@ public class CrashAssistantApp {
         }
     }
 
-    private static boolean checkLoadingErrorScreen(){
+    private static boolean checkLoadingErrorScreen() {
         Path loadingErrorFML = Paths.get("local", "crash_assistant", "loading_error_fml" + parentPID + ".tmp");
 
-        if(loadingErrorFML.toFile().exists()) {
+        if (loadingErrorFML.toFile().exists()) {
             LOGGER.info("Detected FML error modloading screen.");
-            if(CrashAssistantConfig.get("general.show_on_fml_error_screen")){
+            if (CrashAssistantConfig.get("general.show_on_fml_error_screen")) {
                 onMinecraftFinished();
             }
             return true;
