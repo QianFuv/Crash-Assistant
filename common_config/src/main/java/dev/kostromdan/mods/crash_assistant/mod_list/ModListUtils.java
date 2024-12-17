@@ -32,7 +32,7 @@ public class ModListUtils {
                 }
             });
             return filenames;
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error while getting current mod list: ", e);
         }
         return new HashSet<>();
@@ -46,7 +46,7 @@ public class ModListUtils {
                 }.getType();
                 return GSON.fromJson(json, setType);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error while getting Modlist", e);
         }
         return new HashSet<>();
@@ -59,7 +59,7 @@ public class ModListUtils {
             }
 
             LOGGER.info("Modlist saved to " + JSON_FILE);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error while saving Modlist", e);
         }
     }
