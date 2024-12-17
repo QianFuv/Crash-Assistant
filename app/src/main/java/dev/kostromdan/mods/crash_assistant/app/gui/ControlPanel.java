@@ -3,6 +3,8 @@ package dev.kostromdan.mods.crash_assistant.app.gui;
 import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
 import dev.kostromdan.mods.crash_assistant.app.utils.ClipboardUtils;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import dev.kostromdan.mods.crash_assistant.mod_list.ModListDiff;
+import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,6 +98,26 @@ public class ControlPanel {
                 generatedMsg = CrashAssistantConfig.get("text.msg").toString() + "\n";
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     generatedMsg += panel.getFileName() + ": " + panel.getUploadedLink() + "\n";
+                }
+                if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
+                    ModListDiff diff = ModListUtils.getDiff();
+                    generatedMsg += "\nModlist changes beyond the modpack:\n";
+                    if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
+                        generatedMsg += "Modpack modlist wasn't modified.\n";
+                    } else {
+                        generatedMsg += "Added mods:\n";
+                        if (diff.addedMods().isEmpty()) {
+                            generatedMsg += "Mods weren't added.\n";
+                        } else {
+                            generatedMsg += String.join("\n", diff.addedMods());
+                        }
+                        generatedMsg += "\nRemoved mods:\n";
+                        if (diff.removedMods().isEmpty()) {
+                            generatedMsg += "Mods weren't removed.\n";
+                        } else {
+                            generatedMsg += String.join("\n", diff.removedMods());
+                        }
+                    }
                 }
             }
             ClipboardUtils.copy(generatedMsg);
