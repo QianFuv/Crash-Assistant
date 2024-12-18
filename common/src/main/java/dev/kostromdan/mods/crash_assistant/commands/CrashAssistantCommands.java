@@ -9,6 +9,7 @@ import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -29,7 +30,7 @@ public class CrashAssistantCommands {
         );
     }
 
-    public static <S> int saveModlist(CommandContext<S> context) {
+    public static int saveModlist(CommandContext<CommandSourceStack> context) {
         LocalPlayer player = Minecraft.getInstance().player;
         String UUID = Minecraft.getInstance().getUser().getUuid();
 
@@ -73,7 +74,7 @@ public class CrashAssistantCommands {
         return 0;
     }
 
-    public static <S> int showDiff(CommandContext<S> context) {
+    public static int showDiff(CommandContext<CommandSourceStack> context) {
         LocalPlayer player = Minecraft.getInstance().player;
         MutableComponent msg = Component.empty();
         ModListDiff diff = ModListUtils.getDiff();

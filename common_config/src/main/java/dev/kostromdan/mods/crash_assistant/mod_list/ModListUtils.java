@@ -3,6 +3,7 @@ package dev.kostromdan.mods.crash_assistant.mod_list;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,5 +76,30 @@ public class ModListUtils {
                 // Removed mods: present in saved but not in current
                 savedModList.stream().filter(mod -> !currentModList.contains(mod)).collect(Collectors.toCollection(TreeSet::new))
         );
+    }
+
+    public static String generateDiffMsg() {
+        String generatedMsg = "";
+        if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
+            ModListDiff diff = ModListUtils.getDiff();
+            generatedMsg += "Modlist changes beyond the modpack:\n";
+            if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
+                generatedMsg += "Modpack modlist wasn't modified.\n";
+            } else {
+                generatedMsg += "Added mods:\n";
+                if (diff.addedMods().isEmpty()) {
+                    generatedMsg += "Mods weren't added.\n";
+                } else {
+                    generatedMsg += String.join("\n", diff.addedMods());
+                }
+                generatedMsg += "\nRemoved mods:\n";
+                if (diff.removedMods().isEmpty()) {
+                    generatedMsg += "Mods weren't removed.\n";
+                } else {
+                    generatedMsg += String.join("\n", diff.removedMods());
+                }
+            }
+        }
+        return generatedMsg;
     }
 }

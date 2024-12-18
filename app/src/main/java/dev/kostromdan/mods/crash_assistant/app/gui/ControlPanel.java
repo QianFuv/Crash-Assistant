@@ -22,18 +22,53 @@ public class ControlPanel {
         this.fileListPanel = fileListPanel;
 
         panel = new JPanel(new BorderLayout());
-        JPanel buttonPanel = new JPanel(new BorderLayout());
+
+        JPanel labelButtonPanel = new JPanel();
+        labelButtonPanel.setLayout(new BoxLayout(labelButtonPanel, BoxLayout.X_AXIS));
+
+        if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
+            ModListDiff diff = ModListUtils.getDiff();
+            String labelMsg;
+            JButton showModListButton = new JButton("show modlist diff");
+            if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
+                labelMsg = "Modpack modlist wasn't changed:";
+                showModListButton.setEnabled(false);
+                showModListButton.setToolTipText(labelMsg);
+            } else {
+                labelMsg = "<html><div style='white-space:nowrap;'>Detected <span style='color:green;'>" + diff.addedMods().size() + "</span> mods added, "
+                        + "<span style='color:red;'>" + diff.removedMods().size() + "</span> mods removed:</div></html>";
+            }
+
+            JLabel label = new JLabel(labelMsg);
+            label.setMaximumSize(label.getPreferredSize());
+            showModListButton.addActionListener(e -> showModList());
+
+            showModListButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, showModListButton.getPreferredSize().height));
+
+            labelButtonPanel.add(label);
+            labelButtonPanel.add(Box.createHorizontalStrut(10));
+            labelButtonPanel.add(showModListButton);
+            labelButtonPanel.add(Box.createHorizontalGlue());
+
+            panel.add(labelButtonPanel, BorderLayout.NORTH);
+        }
+
+        JPanel bottomPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
         uploadAllButton = new JButton("upload all and copy msg with links to all files");
         uploadAllButton.addActionListener(e -> uploadAllFiles());
-
-        buttonPanel.add(uploadAllButton);
-
-        panel.add(buttonPanel, BorderLayout.NORTH);
+        gbc.gridy = 0;
+        bottomPanel.add(uploadAllButton, gbc);
 
         JButton requestHelpButton = new JButton(CrashAssistantConfig.get("text.request_help_button").toString());
         requestHelpButton.addActionListener(e -> requestHelp());
-        panel.add(requestHelpButton, BorderLayout.SOUTH);
+        gbc.gridy = 1;
+        bottomPanel.add(requestHelpButton, gbc);
+
+        panel.add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public JPanel getPanel() {
@@ -47,6 +82,11 @@ public class ControlPanel {
         } catch (Exception e) {
             CrashAssistantApp.LOGGER.error("Failed to open help_link in browser: ", e);
         }
+    }
+
+    private void showModList() {
+        // Mock function for displaying mod list
+        JOptionPane.showMessageDialog(null, ModListUtils.generateDiffMsg(), "Mod List DIff", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void uploadAllFiles() {
@@ -99,26 +139,8 @@ public class ControlPanel {
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     generatedMsg += panel.getFileName() + ": " + panel.getUploadedLink() + "\n";
                 }
-                if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
-                    ModListDiff diff = ModListUtils.getDiff();
-                    generatedMsg += "\nModlist changes beyond the modpack:\n";
-                    if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
-                        generatedMsg += "Modpack modlist wasn't modified.\n";
-                    } else {
-                        generatedMsg += "Added mods:\n";
-                        if (diff.addedMods().isEmpty()) {
-                            generatedMsg += "Mods weren't added.\n";
-                        } else {
-                            generatedMsg += String.join("\n", diff.addedMods());
-                        }
-                        generatedMsg += "\nRemoved mods:\n";
-                        if (diff.removedMods().isEmpty()) {
-                            generatedMsg += "Mods weren't removed.\n";
-                        } else {
-                            generatedMsg += String.join("\n", diff.removedMods());
-                        }
-                    }
-                }
+                generatedMsg += "\n";
+                generatedMsg += ModListUtils.generateDiffMsg();
             }
             ClipboardUtils.copy(generatedMsg);
             uploadAllButton.setText("Copied!");

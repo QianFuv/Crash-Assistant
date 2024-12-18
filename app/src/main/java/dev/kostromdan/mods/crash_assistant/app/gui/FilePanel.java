@@ -16,8 +16,10 @@ import java.util.concurrent.ExecutionException;
 
 public class FilePanel {
     private final JPanel panel;
-    private final Border thinBorder;
+    private final JButton showButton;
+    private final JButton openButton;
     private final JButton uploadButton;
+    private final JButton browserButton;
     private final Path filePath;
     private final String fileName;
     private String uploadedLink = null;
@@ -39,23 +41,21 @@ public class FilePanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
-        thinBorder = BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
-                BorderFactory.createEmptyBorder(new JButton().getBorder().getBorderInsets(new JButton()).top, 9, new JButton().getBorder().getBorderInsets(new JButton()).bottom, 9)
-        );
-
-
-        JButton openButton = createButton("open", e -> openFile());
-
-        JButton showButton = createButton("show in explorer", e -> showInExplorer());
+        openButton = createButton("open", e -> openFile());
+        showButton = createButton("show in explorer", e -> showInExplorer());
 
         uploadButton = createButton("upload and copy link", e -> uploadFile());
+
+        browserButton = createButton("\uD83C\uDF10", e -> openInBrowser());
+        browserButton.setVisible(false);
+        browserButton.setToolTipText("Opens link in browser");
 
 
         buttonPanel.add(spacerPanel);
         buttonPanel.add(openButton);
         buttonPanel.add(showButton);
         buttonPanel.add(uploadButton);
+        buttonPanel.add(browserButton);
 
         panel.add(buttonPanel, BorderLayout.EAST);
 
@@ -63,18 +63,10 @@ public class FilePanel {
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
     }
 
-    public static JButton createButton(String text, ActionListener actionListener) {
+    public JButton createButton(String text, ActionListener actionListener) {
         JButton button = new JButton(text);
         button.addActionListener(actionListener);
-        button.setPreferredSize(new Dimension(button.getPreferredSize().width, 25));
-        return button;
-    }
-
-    public static JButton createButtonWithBorder(String text, ActionListener actionListener, Border border) {
-        JButton button = new JButton(text);
-        button.addActionListener(actionListener);
-        button.setBorder(border);
-        button.setPreferredSize(new Dimension(button.getPreferredSize().width, 25));
+//        button.setPreferredSize(new Dimension(button.getPreferredSize().width, 25));
         return button;
     }
 
@@ -148,6 +140,7 @@ public class FilePanel {
             if (uploadedLink == null) {
                 lastError = null;
                 uploadButton.setEnabled(false);
+                uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width, 25));
                 uploadButton.setText("Uploading...");
 
                 try {
@@ -188,6 +181,12 @@ public class FilePanel {
             }
             if (fromButton) {
                 ClipboardUtils.copy(uploadedLink);
+
+                uploadButton.setText("copy link");
+                uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width +14, 25));
+                browserButton.setVisible(true);
+                panel.revalidate();
+
                 uploadButton.setText("Copied!");
                 uploadButton.setEnabled(false);
             }
@@ -196,8 +195,11 @@ public class FilePanel {
                         @Override
                         public void run() {
                             uploadButton.setText("copy link");
-                            uploadButton.setEnabled(true);
+                            uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width+14, 25));
+                            browserButton.setVisible(true);
                             panel.revalidate();
+
+                            uploadButton.setEnabled(true);
                         }
                     },
                     fromButton ? 2000 : 0
@@ -205,5 +207,3 @@ public class FilePanel {
         }).start();
     }
 }
-
-
