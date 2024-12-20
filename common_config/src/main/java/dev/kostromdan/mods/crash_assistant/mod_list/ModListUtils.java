@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +26,9 @@ public class ModListUtils {
     public static HashSet<String> getCurrentModList() {
         try {
             HashSet<String> filenames = new HashSet<>();
+            if (!Files.exists(MODS_FOLDER)) {
+                return filenames;
+            }
             Files.list(MODS_FOLDER).forEach(path -> {
                 if (Files.isRegularFile(path)) {
                     filenames.add(path.getFileName().toString());

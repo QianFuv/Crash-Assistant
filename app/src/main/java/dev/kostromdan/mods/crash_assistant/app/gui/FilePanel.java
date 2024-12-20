@@ -6,7 +6,6 @@ import dev.kostromdan.mods.crash_assistant.app.utils.ClipboardUtils;
 import gs.mclo.api.response.UploadLogResponse;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class FilePanel {
 
         browserButton = createButton("\uD83C\uDF10", e -> openInBrowser());
         browserButton.setVisible(false);
-        browserButton.setToolTipText("Opens link in browser");
+        browserButton.setToolTipText("Open link in browser");
 
 
         buttonPanel.add(spacerPanel);
@@ -59,14 +58,13 @@ public class FilePanel {
 
         panel.add(buttonPanel, BorderLayout.EAST);
 
-        panel.setMinimumSize(new Dimension(0, 35));
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        panel.setMinimumSize(new Dimension(0, panel.getPreferredSize().height));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, panel.getPreferredSize().height));
     }
 
     public JButton createButton(String text, ActionListener actionListener) {
         JButton button = new JButton(text);
         button.addActionListener(actionListener);
-//        button.setPreferredSize(new Dimension(button.getPreferredSize().width, 25));
         return button;
     }
 
@@ -117,10 +115,6 @@ public class FilePanel {
 
     public String getUploadedLink() {
         return uploadedLink;
-    }
-
-    public String getUploadButtonText() {
-        return uploadButton.getText();
     }
 
     public Path getFilePath() {
@@ -182,10 +176,7 @@ public class FilePanel {
             if (fromButton) {
                 ClipboardUtils.copy(uploadedLink);
 
-                uploadButton.setText("copy link");
-                uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width +14, 25));
-                browserButton.setVisible(true);
-                panel.revalidate();
+                transformCopyLinkButton();
 
                 uploadButton.setText("Copied!");
                 uploadButton.setEnabled(false);
@@ -195,15 +186,20 @@ public class FilePanel {
                         @Override
                         public void run() {
                             uploadButton.setText("copy link");
-                            uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width+14, 25));
-                            browserButton.setVisible(true);
-                            panel.revalidate();
-
+                            transformCopyLinkButton();
                             uploadButton.setEnabled(true);
                         }
                     },
                     fromButton ? 2000 : 0
             );
         }).start();
+    }
+
+    private void transformCopyLinkButton() {
+        String oldText = uploadButton.getText();
+        browserButton.setVisible(true);
+        uploadButton.setText("upload and copy link");
+        uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width - browserButton.getMinimumSize().width - 5, uploadButton.getMinimumSize().height));
+        uploadButton.setText(oldText);
     }
 }

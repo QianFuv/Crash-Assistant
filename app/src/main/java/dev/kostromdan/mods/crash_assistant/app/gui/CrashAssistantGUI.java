@@ -35,7 +35,9 @@ public class CrashAssistantGUI {
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
         labelPanel.add(titleLabel);
-        labelPanel.add(commentLabel);
+        if (!commentText.isEmpty()) {
+            labelPanel.add(commentLabel);
+        }
 
         frame.add(labelPanel, BorderLayout.NORTH);
 

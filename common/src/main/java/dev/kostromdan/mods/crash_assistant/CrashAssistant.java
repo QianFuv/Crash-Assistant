@@ -1,17 +1,17 @@
 package dev.kostromdan.mods.crash_assistant;
 
-import com.mojang.logging.LogUtils;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
 import net.minecraft.client.Minecraft;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
 public final class CrashAssistant {
     public static final String MOD_ID = "crash_assistant";
-    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static boolean clientLoaded = false;
 
 
