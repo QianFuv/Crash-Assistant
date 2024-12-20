@@ -190,7 +190,7 @@ public class FilePanel {
                             uploadButton.setEnabled(true);
                         }
                     },
-                    fromButton ? 2000 : 0
+                    fromButton ? 3000 : 0
             );
         }).start();
     }

@@ -47,12 +47,17 @@ public class CrashAssistantGUI {
         controlPanel = new ControlPanel(fileListPanel);
         frame.add(controlPanel.getPanel(), BorderLayout.SOUTH);
 
+        int heightWithoutScrollPane = frame.getPreferredSize().height;
+
         for (Map.Entry<String, Path> entry : availableLogs.entrySet()) {
             fileListPanel.addFile(entry.getKey(), entry.getValue());
         }
 
-        frame.setSize(Math.max(fileListPanel.getFileListPanel().getPreferredSize().width, controlPanel.getPanel().getPreferredSize().width) + 26, frame.getHeight());
+        frame.setSize(Math.max(fileListPanel.getFileListPanel().getPreferredSize().width+12, controlPanel.getPanel().getPreferredSize().width) + 26,
+                Math.min(heightWithoutScrollPane + fileListPanel.getFileListPanel().getPreferredSize().height + 39, 700));
+        frame.setMinimumSize(new Dimension(frame.getSize().width, heightWithoutScrollPane+73));
 
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
         frame.toFront();
