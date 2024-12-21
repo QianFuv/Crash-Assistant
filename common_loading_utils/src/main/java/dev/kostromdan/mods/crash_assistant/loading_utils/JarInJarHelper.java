@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Core;
 import org.slf4j.Logger;
@@ -25,15 +26,17 @@ public interface JarInJarHelper {
 
     static void launchCrashAssistantApp() {
         try {
-            Path extractedJarPath = extractJarInJar("app.jar");
-
             ProcessHandle currentProcess = ProcessHandle.current();
+            String currentProcessData = Objects.toString(currentProcess.pid()) + "_"
+                    + Objects.toString(currentProcess.info().startInstant().get().getEpochSecond());
+            Path extractedJarPath = extractJarInJar("app.jar", currentProcessData + "_app.jar");
+
             Optional<String> javaBinary = currentProcess.info().command();
             if (javaBinary.isEmpty()) {
                 throw new IllegalStateException("Unable to determine the java binary path of current JVM. Crash Assistant won't work.");
             }
 
-            ProcessBuilder crashAssistantAppProcess = new ProcessBuilder(
+            ProcessBuilder crashAssistantAppProcessBuilder = new ProcessBuilder(
                     javaBinary.get(),
                     "-XX:+UseG1GC",
                     "-XX:MaxHeapFreeRatio=30",
@@ -49,31 +52,90 @@ public interface JarInJarHelper {
                     "-nightConfigCore", LibrariesJarLocator.getLibraryJarPath(FileConfig.class),
                     "-nightConfigToml", LibrariesJarLocator.getLibraryJarPath(TomlFormat.class)
             );
-            crashAssistantAppProcess.start();
+            Process crashAssistantAppProcess = crashAssistantAppProcessBuilder.start();
+            Path currentProcessDataPath = Paths.get("local", "crash_assistant", currentProcessData + ".info");
+            try {
+                Files.write(currentProcessDataPath, Long.toString(crashAssistantAppProcess.pid()).getBytes());
+            } catch (IOException ignored) {
+            }
+
 
         } catch (Exception e) {
             LOGGER.error("Error while launching GUI: ", e);
         }
     }
 
-    static Path extractJarInJar(String name) throws IOException {
+    static Path extractJarInJar(String embeddedName, String outputName) throws IOException {
         Path outputDirectory = Paths.get("local", "crash_assistant");
         if (!Files.exists(outputDirectory)) {
             Files.createDirectories(outputDirectory);
         }
+        Path extractedJarPath = outputDirectory.resolve(outputName);
 
-        Path extractedJarPath = outputDirectory.resolve(name);
+        Files.list(outputDirectory).forEach(path -> {
+            String fileName = path.getFileName().toString();
+            if (Files.isRegularFile(path) && fileName.endsWith("app.jar")) {
+                String processInfo = fileName.split("_app.jar")[0];
+                Path processInfoPath = outputDirectory.resolve(processInfo + ".info");
+                try {
+                    Files.deleteIfExists(path);
+                    Files.deleteIfExists(processInfoPath);
+                } catch (IOException e) {
+                    if (Files.exists(processInfoPath)) {
+                        if (CrashAssistantConfig.get("general.kill_old_app")) {
+                            Long minecraft_pid = Long.parseLong(processInfo.split("_")[0]);
+                            Long start_time = Long.parseLong(processInfo.split("_")[1]);
+                            Long app_pid;
+                            try {
+                                app_pid = Long.parseLong(Files.readString(processInfoPath));
+                            } catch (IOException ex) {
+                                LOGGER.error("Error while reading " + processInfoPath + ". This should never happen:", ex);
+                                throw new RuntimeException(ex);
+                            }
+                            Optional<ProcessHandle> minecraftProcess = ProcessHandle.of(minecraft_pid);
+                            Optional<ProcessHandle> appProcess = ProcessHandle.of(app_pid);
+                            if (appProcess.isPresent()
+                                    && !(minecraftProcess.isPresent() && minecraftProcess.get().info().startInstant().get().getEpochSecond() == start_time)) {
+                                LOGGER.warn("Closed old CrashAssistantApp process to not confuse player with window with info from old crash.");
+                                appProcess.get().destroy();
+                                new java.util.Timer().schedule(
+                                        new java.util.TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                while (appProcess.get().isAlive()) {
+                                                    try {
+                                                        Thread.sleep(1);
+                                                    } catch (InterruptedException ignored) {
+                                                    }
+                                                }
+                                                try {
+                                                    Files.deleteIfExists(path);
+                                                    Files.deleteIfExists(processInfoPath);
+                                                } catch (IOException ignored) {
+                                                }
+                                            }
+                                        },
+                                        1000
+                                );
+                            }
+                        }
+                    }
+                }
+            } else if (Files.isRegularFile(path) && fileName.endsWith(".info") && fileName.contains("_")) {
+                String processInfo = fileName.split("\\.info")[0];
+                if(!Files.exists(outputDirectory.resolve(processInfo + "_app.jar"))) {
+                    try {
+                        Files.deleteIfExists(path);
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+        });
 
-        try {
-            Files.deleteIfExists(extractedJarPath);
-        } catch (IOException e) {
-            LOGGER.warn("Error while deleting app.jar, seems like GUI from prev. launch is still running: ", e);
-        }
-
-        InputStream jarStream = JarInJarHelper.class.getResourceAsStream("/META-INF/jarjar/" + name);
+        InputStream jarStream = JarInJarHelper.class.getResourceAsStream("/META-INF/jarjar/" + embeddedName);
 
         if (jarStream == null) {
-            throw new FileNotFoundException("Could not find embedded JAR: " + name);
+            throw new FileNotFoundException("Could not find embedded JAR: " + embeddedName);
         }
 
         try (OutputStream out = Files.newOutputStream(extractedJarPath)) {

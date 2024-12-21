@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.OverlappingFileLockException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -38,6 +39,9 @@ public class CrashAssistantConfig {
                 "https://discord.gg/moddedmc");
         addOption("general.show_on_fml_error_screen",
                 "Show gui on minecraft crashed on modloading and FML error screen displayed.",
+                true);
+        addOption("general.kill_old_app",
+                "Close old CrashAssistantApp if it not closed on new Minecraft start, to not confuse player with window from old crash.",
                 true);
 
         ArrayList<String> defaultBlacklistedLogs = new ArrayList<>();
@@ -126,6 +130,7 @@ public class CrashAssistantConfig {
         try (var lockChannel = FileChannel.open(CONFIG_LOCK_PATH, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
              var lock = lockChannel.lock()) {
             function.run();
+            Files.deleteIfExists(CONFIG_LOCK_PATH);
         } catch (OverlappingFileLockException e) { // Current JVM FileLock already locked, ignoring
             function.run();
         } catch (IOException e) {
