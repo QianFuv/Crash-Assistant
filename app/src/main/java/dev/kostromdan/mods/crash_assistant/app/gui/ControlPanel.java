@@ -85,7 +85,6 @@ public class ControlPanel {
     }
 
     private void showModList() {
-        // Mock function for displaying mod list
         JOptionPane.showMessageDialog(null, ModListUtils.generateDiffMsg(), "Mod List DIff", JOptionPane.INFORMATION_MESSAGE);
     }
 
