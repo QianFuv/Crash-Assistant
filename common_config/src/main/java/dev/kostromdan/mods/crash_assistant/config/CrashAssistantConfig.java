@@ -135,7 +135,7 @@ public class CrashAssistantConfig {
 
     public static void update() {
         executeWithLock(() -> {
-            if (CONFIG_PATH.toFile().lastModified() > lastConfigUpdate) {
+            if (!CONFIG_PATH.toFile().exists() || CONFIG_PATH.toFile().lastModified() > lastConfigUpdate) {
                 load();
             }
         });

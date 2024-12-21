@@ -17,6 +17,22 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 
 public class CrashAssistantCommands {
+    public static Component modConfig = Component.literal("[mod config]")
+            .withStyle(style -> style
+                    .withColor(ChatFormatting.YELLOW)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, CrashAssistantConfig.getConfigPath().toAbsolutePath().toString()))
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to open config")))
+            );
+
+    public static Component getCopyUUIDComponent(String playerUUID) {
+        return Component.literal("[UUID]")
+                .withStyle(style -> style
+                        .withColor(ChatFormatting.YELLOW)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, '"' + playerUUID + '"'))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to copy UUID")))
+                );
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> void register(CommandDispatcher<T> dispatcher) {
         dispatcher.register((LiteralArgumentBuilder<T>) Commands.literal("crash_assistant")
@@ -30,25 +46,29 @@ public class CrashAssistantCommands {
         );
     }
 
+    public static boolean checkModlistFeatureEnabled() {
+        if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
+            return true;
+        }
+        MutableComponent msg = Component.empty();
+        msg.append(Component.literal("Modlist feature is disabled! You can enable it in "));
+        msg.append(modConfig);
+        msg.withStyle(ChatFormatting.RED);
+        Minecraft.getInstance().player.sendSystemMessage(msg);
+        return false;
+    }
+
     public static int saveModlist(CommandContext<CommandSourceStack> context) {
         LocalPlayer player = Minecraft.getInstance().player;
-        String UUID = Minecraft.getInstance().getUser().getUuid();
+        String playerUUID = Minecraft.getInstance().getUser().getUuid();
 
-        Component modConfig = Component.literal("[mod config]")
-                .withStyle(style -> style
-                        .withColor(ChatFormatting.YELLOW)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, CrashAssistantConfig.getConfigPath().toAbsolutePath().toString()))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to open config")))
-                );
-        Component copyUUID = Component.literal("[UUID]")
-                .withStyle(style -> style
-                        .withColor(ChatFormatting.YELLOW)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, '"' + UUID + '"'))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to copy UUID")))
-                );
+        if (!checkModlistFeatureEnabled()) {
+            return 0;
+        }
+
         MutableComponent msg = Component.empty();
 
-        if (CrashAssistantConfig.getModpackCreators().contains(UUID)) {
+        if (CrashAssistantConfig.getModpackCreators().contains(playerUUID)) {
             ModListUtils.saveCurrentModList();
             msg.append(Component.literal("Modpack modlist overwritten successfully!\n"));
             if (CrashAssistantConfig.get("modpack_modlist.auto_update")) {
@@ -65,7 +85,7 @@ public class CrashAssistantCommands {
             msg.append(Component.literal("You are not creator of this modpack!\n"
                     + "Overwriting modlist by the end user will create problems to modpack authors with helping you!\n"
                     + "If you think what it's a mistake, add your "));
-            msg.append(copyUUID);
+            msg.append(getCopyUUIDComponent(playerUUID));
             msg.append(Component.literal(" to modpack creators list in "));
             msg.append(modConfig);
             msg.withStyle(ChatFormatting.RED);
@@ -77,6 +97,11 @@ public class CrashAssistantCommands {
     public static int showDiff(CommandContext<CommandSourceStack> context) {
         LocalPlayer player = Minecraft.getInstance().player;
         MutableComponent msg = Component.empty();
+
+        if (!checkModlistFeatureEnabled()) {
+            return 0;
+        }
+
         ModListDiff diff = ModListUtils.getDiff();
 
         msg.append(Component.literal("Added mods: \n").withStyle(style -> style.withColor(ChatFormatting.DARK_GREEN)));
