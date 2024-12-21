@@ -2,7 +2,7 @@
 - Config.
 - Modlist.
 - Commands.
-- Very many changes.
+- Very many changes and fixes.
 
 1.0.1:
 - Get rid of fatjar.
