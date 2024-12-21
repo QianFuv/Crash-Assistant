@@ -23,7 +23,8 @@ public class MinecraftMixin {
     }
 
     /**
-     * Minecraft.stop launches only on normal exit. This way we detect crashes without crash report or hs_err.
+     * Minecraft.stop launches only on normal exit or if crash report generated.
+     * This way we detect crashes without crash report or hs_err.
      */
     @Inject(method = "stop", at = @At("RETURN"), cancellable = false)
     private void stop(CallbackInfo ci) {
