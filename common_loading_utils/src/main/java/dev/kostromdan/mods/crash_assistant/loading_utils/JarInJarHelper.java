@@ -102,12 +102,6 @@ public interface JarInJarHelper {
                                         new java.util.TimerTask() {
                                             @Override
                                             public void run() {
-                                                while (appProcess.get().isAlive()) {
-                                                    try {
-                                                        Thread.sleep(1);
-                                                    } catch (InterruptedException ignored) {
-                                                    }
-                                                }
                                                 try {
                                                     Files.deleteIfExists(path);
                                                     Files.deleteIfExists(processInfoPath);
@@ -115,7 +109,7 @@ public interface JarInJarHelper {
                                                 }
                                             }
                                         },
-                                        1000
+                                        5000
                                 );
                             }
                         }
