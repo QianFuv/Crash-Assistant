@@ -41,7 +41,7 @@ public class CrashAssistantConfig {
                 "Show gui on minecraft crashed on modloading and FML error screen displayed.",
                 true);
         addOption("general.kill_old_app",
-                "Close old CrashAssistantApp if it not closed on new Minecraft start, to not confuse player with window from old crash.",
+                "Close old CrashAssistantApp if it's still running when starting a new instance of Minecraft, to avoid confusing player with window from old crash.",
                 true);
 
         ArrayList<String> defaultBlacklistedLogs = new ArrayList<>();

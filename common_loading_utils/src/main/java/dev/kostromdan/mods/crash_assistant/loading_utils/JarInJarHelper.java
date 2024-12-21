@@ -96,7 +96,7 @@ public interface JarInJarHelper {
                             Optional<ProcessHandle> appProcess = ProcessHandle.of(app_pid);
                             if (appProcess.isPresent()
                                     && !(minecraftProcess.isPresent() && minecraftProcess.get().info().startInstant().get().getEpochSecond() == start_time)) {
-                                LOGGER.warn("Closed old CrashAssistantApp process to not confuse player with window with info from old crash.");
+                                LOGGER.warn("Closed old CrashAssistantApp process to prevent confusing the player with window containing information from old crash.");
                                 appProcess.get().destroy();
                                 new java.util.Timer().schedule(
                                         new java.util.TimerTask() {
