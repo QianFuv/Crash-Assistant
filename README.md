@@ -2,7 +2,7 @@
 
 Shows a GUI after Minecraft crashes, immediately showing all affected game/launcher logs, crash reports, or hs_err files. Provides a one-click solution to upload them, copy the link, and perform other actions for easier reporting, debugging, and troubleshooting.
 
-![image](https://github.com/user-attachments/assets/ffbf2db6-19d7-4ab6-b511-1d0d71f47d18)
+![image](https://github.com/user-attachments/assets/3bc47fdb-08c0-49b3-a6e2-8d66af841af1)
 
 ## Contributing:
 Use gradle `build` task of root project. Compiled jars can be found in: `build\libs`:
