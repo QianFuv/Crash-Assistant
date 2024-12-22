@@ -3,6 +3,7 @@ package dev.kostromdan.mods.crash_assistant.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import dev.kostromdan.mods.crash_assistant.CrashAssistant;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListDiff;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
@@ -60,7 +61,6 @@ public class CrashAssistantCommands {
 
     public static int saveModlist(CommandContext<CommandSourceStack> context) {
         LocalPlayer player = Minecraft.getInstance().player;
-        String playerUUID = Minecraft.getInstance().getUser().getUuid();
 
         if (!checkModlistFeatureEnabled()) {
             return 0;
@@ -68,7 +68,7 @@ public class CrashAssistantCommands {
 
         MutableComponent msg = Component.empty();
 
-        if (CrashAssistantConfig.getModpackCreators().contains(playerUUID)) {
+        if (CrashAssistantConfig.getModpackCreators().contains(CrashAssistant.playerUUID)) {
             ModListUtils.saveCurrentModList();
             msg.append(Component.literal("Modpack modlist overwritten successfully!\n"));
             if (CrashAssistantConfig.get("modpack_modlist.auto_update")) {
@@ -85,7 +85,7 @@ public class CrashAssistantCommands {
             msg.append(Component.literal("You are not creator of this modpack!\n"
                     + "Overwriting modlist by the end user will create problems to modpack authors with helping you!\n"
                     + "If you think what it's a mistake, add your "));
-            msg.append(getCopyUUIDComponent(playerUUID));
+            msg.append(getCopyUUIDComponent(CrashAssistant.playerUUID));
             msg.append(Component.literal(" to modpack creators list in "));
             msg.append(modConfig);
             msg.withStyle(ChatFormatting.RED);

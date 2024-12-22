@@ -13,16 +13,17 @@ public final class CrashAssistant {
     public static final String MOD_ID = "crash_assistant";
     public static final Logger LOGGER = LogManager.getLogger();
     public static boolean clientLoaded = false;
-
+    public static String playerUUID;
 
     public static void init() {
         if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
-            String userUUID = Minecraft.getInstance().getUser().getUuid();
+            playerUUID = Minecraft.getInstance().getUser().getUuid();
+
             if (CrashAssistantConfig.getModpackCreators().isEmpty()) {
-                CrashAssistantConfig.addModpackCreator(userUUID);
+                CrashAssistantConfig.addModpackCreator(playerUUID);
             }
             if ((Boolean) CrashAssistantConfig.get("modpack_modlist.auto_update") &&
-                    CrashAssistantConfig.getModpackCreators().contains(userUUID)) {
+                    CrashAssistantConfig.getModpackCreators().contains(playerUUID)) {
                 ModListUtils.saveCurrentModList();
             }
         }
