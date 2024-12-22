@@ -1,3 +1,7 @@
+1.1.1:
+- Fixed some options didn't support Chinese.
+- Small fixes.
+
 1.1.0:
 - Config.
 - Modlist.
