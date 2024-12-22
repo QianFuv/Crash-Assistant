@@ -8,8 +8,9 @@
     "KostromDan"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/crash-assistant",
+    "sources": "https://github.com/KostromDan/Crash-Assistant",
+    "issues": "https://github.com/KostromDan/Crash-Assistant/issues"
   },
   "license": "MIT",
   "icon": "assets/crash_assistant/icon.png",
