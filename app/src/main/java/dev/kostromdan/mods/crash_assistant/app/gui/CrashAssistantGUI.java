@@ -30,7 +30,7 @@ public class CrashAssistantGUI {
 
         String commentText = CrashAssistantConfig.get("text.comment_under_title").toString();
         JLabel commentLabel = new JLabel("<html><div style='white-space:nowrap;'>" + commentText.replaceAll("\n", "<br>") + "</div></html>");
-        commentLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        commentLabel.setFont(commentLabel.getFont().deriveFont(Font.PLAIN, 12f));
 
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
