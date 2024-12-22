@@ -26,7 +26,7 @@ public class CrashAssistantGUI {
                 CrashAssistantConfig.get("text.title_crashed_with_report").toString() :
                 CrashAssistantConfig.get("text.title_crashed_without_report").toString();
         JLabel titleLabel = new JLabel(titleText, SwingConstants.LEFT);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setFont(titleLabel.getFont().deriveFont(16f));
 
         String commentText = CrashAssistantConfig.get("text.comment_under_title").toString();
         JLabel commentLabel = new JLabel("<html><div style='white-space:nowrap;'>" + commentText.replaceAll("\n", "<br>") + "</div></html>");
