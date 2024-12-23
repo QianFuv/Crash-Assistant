@@ -1,5 +1,7 @@
 package dev.kostromdan.mods.crash_assistant.app.gui;
 
+import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
+
 import javax.swing.*;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -15,7 +17,7 @@ public class FileListPanel {
 
         scrollPane = new JScrollPane(fileListPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Available log files:"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder(LanguageProvider.get("gui.file_list_label")));
     }
 
     public JScrollPane getScrollPane() {

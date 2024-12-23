@@ -3,6 +3,7 @@ package dev.kostromdan.mods.crash_assistant.app.gui;
 import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
 import dev.kostromdan.mods.crash_assistant.app.utils.ClipboardUtils;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListDiff;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 
@@ -29,14 +30,17 @@ public class ControlPanel {
         if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
             ModListDiff diff = ModListUtils.getDiff();
             String labelMsg;
-            JButton showModListButton = new JButton("show modlist diff");
+            JButton showModListButton = new JButton(LanguageProvider.get("gui.show_modlist_diff_button"));
             if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
-                labelMsg = "Modpack modlist wasn't changed:";
+                labelMsg = LanguageProvider.get("gui.modlist_not_changed_label");
                 showModListButton.setEnabled(false);
                 showModListButton.setToolTipText(labelMsg);
             } else {
-                labelMsg = "<html><div style='white-space:nowrap;'>Detected <span style='color:green;'>" + diff.addedMods().size() + "</span> mods added, "
-                        + "<span style='color:red;'>" + diff.removedMods().size() + "</span> mods removed:</div></html>";
+                labelMsg = "<html><div style='white-space:nowrap;'>"
+                        + LanguageProvider.get("gui.modlist_changed_label")
+                        .replace("$ADDED_MODS_COUNT$", "<span style='color:green;'>" + diff.addedMods().size() + "</span>")
+                        .replace("$REMOVED_MODS_COUNT$", "<span style='color:red;'>" + diff.removedMods().size() + "</span>")
+                        + "</div></html>";
             }
 
             JLabel label = new JLabel(labelMsg);
@@ -58,12 +62,12 @@ public class ControlPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        uploadAllButton = new JButton("upload all and copy msg with links to all files");
+        uploadAllButton = new JButton(LanguageProvider.get("gui.upload_all_button"));
         uploadAllButton.addActionListener(e -> uploadAllFiles());
         gbc.gridy = 0;
         bottomPanel.add(uploadAllButton, gbc);
 
-        JButton requestHelpButton = new JButton(CrashAssistantConfig.get("text.request_help_button").toString());
+        JButton requestHelpButton = new JButton(LanguageProvider.get("gui.request_help_button"));
         requestHelpButton.addActionListener(e -> requestHelp());
         gbc.gridy = 1;
         bottomPanel.add(requestHelpButton, gbc);
@@ -92,7 +96,7 @@ public class ControlPanel {
         new Thread(() -> {
             uploadAllButton.setEnabled(false);
             if (generatedMsg == null) {
-                uploadAllButton.setText("Uploading...");
+                uploadAllButton.setText(LanguageProvider.get("gui.uploading"));
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     panel.uploadFile(false);
                 }
@@ -112,7 +116,7 @@ public class ControlPanel {
                                     new java.util.TimerTask() {
                                         @Override
                                         public void run() {
-                                            uploadAllButton.setText("upload all and copy msg with links to all files");
+                                            uploadAllButton.setText(LanguageProvider.get("gui.upload_all_button"));
                                             uploadAllButton.setEnabled(true);
                                         }
                                     },
@@ -134,7 +138,7 @@ public class ControlPanel {
 
                     }
                 }
-                generatedMsg = CrashAssistantConfig.get("text.msg").toString() + "\n";
+                generatedMsg = LanguageProvider.get("gui.msg_init_text") + "\n";
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     generatedMsg += panel.getFileName() + ": " + panel.getUploadedLink() + "\n";
                 }
@@ -142,12 +146,12 @@ public class ControlPanel {
                 generatedMsg += ModListUtils.generateDiffMsg();
             }
             ClipboardUtils.copy(generatedMsg);
-            uploadAllButton.setText("Copied!");
+            uploadAllButton.setText(LanguageProvider.get("gui.copied"));
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
-                            uploadAllButton.setText("copy msg with links to all files");
+                            uploadAllButton.setText(LanguageProvider.get("gui.upload_all_finished_button"));
                             uploadAllButton.setEnabled(true);
                         }
                     },

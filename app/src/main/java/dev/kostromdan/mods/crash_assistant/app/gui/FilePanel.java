@@ -3,6 +3,7 @@ package dev.kostromdan.mods.crash_assistant.app.gui;
 import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
 import dev.kostromdan.mods.crash_assistant.app.exceptions.UploadException;
 import dev.kostromdan.mods.crash_assistant.app.utils.ClipboardUtils;
+import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import gs.mclo.api.response.UploadLogResponse;
 
 import javax.swing.*;
@@ -40,10 +41,10 @@ public class FilePanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
-        openButton = createButton("open", e -> openFile());
-        showButton = createButton("show in explorer", e -> showInExplorer());
+        openButton = createButton(LanguageProvider.get("gui.open_button"), e -> openFile());
+        showButton = createButton(LanguageProvider.get("gui.show_in_explorer_button"), e -> showInExplorer());
 
-        uploadButton = createButton("upload and copy link", e -> uploadFile());
+        uploadButton = createButton(LanguageProvider.get("gui.upload_and_copy_link_button"), e -> uploadFile());
 
         browserButton = createButton("\uD83C\uDF10", e -> openInBrowser());
         browserButton.setVisible(false);
@@ -135,7 +136,7 @@ public class FilePanel {
                 lastError = null;
                 uploadButton.setEnabled(false);
                 uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width, 25));
-                uploadButton.setText("Uploading...");
+                uploadButton.setText(LanguageProvider.get("gui.uploading"));
 
                 try {
                     UploadLogResponse response = CrashAssistantGUI.MCLogsClient.uploadLog(filePath).get();
@@ -163,7 +164,7 @@ public class FilePanel {
                                 new java.util.TimerTask() {
                                     @Override
                                     public void run() {
-                                        uploadButton.setText("upload and copy link");
+                                        uploadButton.setText(LanguageProvider.get("gui.upload_and_copy_link_button"));
                                         uploadButton.setEnabled(true);
                                     }
                                 },
@@ -178,14 +179,14 @@ public class FilePanel {
 
                 transformCopyLinkButton();
 
-                uploadButton.setText("Copied!");
+                uploadButton.setText(LanguageProvider.get("gui.copied"));
                 uploadButton.setEnabled(false);
             }
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
-                            uploadButton.setText("copy link");
+                            uploadButton.setText(LanguageProvider.get("gui.copy_link_button"));
                             transformCopyLinkButton();
                             uploadButton.setEnabled(true);
                         }
@@ -198,7 +199,7 @@ public class FilePanel {
     private void transformCopyLinkButton() {
         String oldText = uploadButton.getText();
         browserButton.setVisible(true);
-        uploadButton.setText("upload and copy link");
+        uploadButton.setText(LanguageProvider.get("gui.upload_and_copy_link_button"));
         uploadButton.setPreferredSize(new Dimension(uploadButton.getMinimumSize().width - browserButton.getMinimumSize().width - 5, uploadButton.getMinimumSize().height));
         uploadButton.setText(oldText);
     }

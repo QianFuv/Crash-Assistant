@@ -1,4 +1,15 @@
+
 {
-  "title_crashed_with_report": "Упс, Minecraft кранулся!",
-  "title_crashed_without_report": "Упс, Minecraft крашнулся без краш репорта!"
+  "gui.title_crashed_with_report": "Упс, Minecraft крашнулся!",
+  "gui.title_crashed_without_report": "Упс, Minecraft крашнулся без отчёта о сбое!",
+  "gui.comment_under_title": "Мы сожалеем, что Minecraft крашнулся. Ниже представлены несколько вариантов для решения этой проблемы.\nВы можете просмотреть список доступных логов с соответствующими кнопками действий.\nЕсли вы не уверены, что с этим делать, вы можете присоединиться к Modded Minecraft Discord.\nПросто отправьте сгенерированное сообщение с помощью кнопки внизу в канал player_help.",
+  "gui.file_list_label": "Доступные файлы логов:",
+  "gui.open_button": "открыть",
+  "gui.show_in_explorer_button": "показать в проводнике",
+  "gui.upload_and_copy_link_button": "загрузить и скопировать ссылку",
+  "gui.copy_link_button": "скопировать ссылку",
+  "gui.copied": "Скопировано!",
+  "gui.uploading": "Загружаем...",
+  "gui.msg_init_text": "Minecraft крашнулся!",
+  "gui.request_help_button": "попросить помощи в Modded Minecraft Discord"
 }

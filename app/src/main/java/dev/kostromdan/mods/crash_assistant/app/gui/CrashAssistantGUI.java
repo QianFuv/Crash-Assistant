@@ -7,6 +7,7 @@ import gs.mclo.api.MclogsClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.module.Configuration;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -17,19 +18,20 @@ public class CrashAssistantGUI {
     private final ControlPanel controlPanel;
 
     public CrashAssistantGUI(Map<String, Path> availableLogs) {
-        frame = new JFrame(LanguageProvider.get("window_name"));
+        LanguageProvider.updateLang();
+        frame = new JFrame(LanguageProvider.get("gui.window_name"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
 
         String titleText = CrashAssistantApp.crashed_with_report ?
-                LanguageProvider.get("title_crashed_with_report") :
-                LanguageProvider.get("title_crashed_without_report");
+                LanguageProvider.get("gui.title_crashed_with_report") :
+                LanguageProvider.get("gui.title_crashed_without_report");
         JLabel titleLabel = new JLabel(titleText, SwingConstants.LEFT);
         titleLabel.setFont(titleLabel.getFont().deriveFont(16f));
 
-        String commentText = CrashAssistantConfig.get("text.comment_under_title").toString();
+        String commentText = LanguageProvider.get("gui.comment_under_title");
         JLabel commentLabel = new JLabel("<html><div style='white-space:nowrap;'>" + commentText.replaceAll("\n", "<br>") + "</div></html>");
         commentLabel.setFont(commentLabel.getFont().deriveFont(Font.PLAIN, 12f));
 

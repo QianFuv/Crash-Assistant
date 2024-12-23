@@ -101,6 +101,8 @@ public class LanguageProvider {
                     outputValue = "$DEFAULT";
                 } else if (Objects.equals(unmodified_jar.lang.get(key), config.lang.get(key))) {
                     outputValue = "$DEFAULT";
+                } else if (!unmodified_jar.lang.containsKey(key) && Objects.equals(value, config.lang.get(key))) {
+                    outputValue = "$DEFAULT";
                 } else outputValue = config.lang.getOrDefault(key, "$DEFAULT");
                 outputJson.put(key, outputValue);
             });

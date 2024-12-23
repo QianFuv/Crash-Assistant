@@ -1,2 +1,0 @@
-// for debugging gui localization
-lang:ru_ru

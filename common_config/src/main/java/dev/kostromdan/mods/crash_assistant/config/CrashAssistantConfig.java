@@ -1,5 +1,6 @@
 package dev.kostromdan.mods.crash_assistant.config;
 
+import com.electronwill.nightconfig.core.AbstractCommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +14,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CrashAssistantConfig {
@@ -21,6 +24,7 @@ public class CrashAssistantConfig {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static CommentedFileConfig config;
+    private static HashSet<String> usedOptions = new HashSet<>();
     private static long lastConfigUpdate;
 
     static {
@@ -33,6 +37,7 @@ public class CrashAssistantConfig {
     }
 
     private static void setupDefaultValues() {
+        usedOptions.clear();
         config.setComment("general", "General settings of Crash Assistant mod.");
         addOption("general.help_link",
                 "Link which will be opened in browser on request_help_button pressed.",
@@ -62,25 +67,17 @@ public class CrashAssistantConfig {
                         "GAME_STARTED - will crash game on first tick of TitleScreen. Crash report generated.",
                 "NONE");
 
-        config.setComment("text", "Here you can change text of buttons, generated msg, etc");
-        addOption("text.request_help_button",
-                "Text of request_help_button",
-                "request help in Modded Minecraft Discord");
-        addOption("text.msg",
-                "Initial text of generated msg with links to all files.",
-                "Minecraft crashed!");
-        addOption("text.title_crashed_with_report",
-                "Title label text, then crash report or hs_err exists.",
-                "Oops, Minecraft crashed!");
-        addOption("text.title_crashed_without_report",
-                "Title label text, then no crash report exists.",
-                "Oops, Minecraft crashed without crash report!");
-        addOption("text.comment_under_title",
-                "Comment text under title.",
-                "We regret that Minecraft has crashed. Below are a few options to resolve this issue.\n" +
-                        "You can see the list of available logs, with according action buttons.\n" +
-                        "If you are unsure what to do with this, you can join the Modded Minecraft Discord.\n" +
-                        "Simply post generated message by the button at the bottom in player_help channel.");
+        config.setComment("text", "Here you can change text of lang placeHolders.\n" +
+                "You can change any text in lang files.\n" +
+                "You don't need to modify jar. You can change it in config/crash_assistant/lang. For more info read README.md file located where.");
+        addOption("text.support_name",
+                "$SUPPORT_NAME$ in lang files will be replaced with this value.\n" +
+                        "For example this placeHolder used in: \"gui.request_help_button\": \"request help in $SUPPORT_NAME$\"",
+                "Modded Minecraft Discord");
+        addOption("text.modpack_name",
+                "$MODPACK_NAME$ in lang files will be replaced with this value.\n" +
+                        "For example this placeHolder used in: \"gui.title_crashed_with_report\": \"Oops, $MODPACK_NAME$ crashed!\"",
+                "Minecraft");
 
         config.setComment("modpack_modlist", "Settings of modlist feature.\n" +
                 "Adds in generated msg block about which mods modpack user added/removed/updated.");
@@ -89,16 +86,33 @@ public class CrashAssistantConfig {
                 true);
         addOption("modpack_modlist.modpack_creators",
                 "UUID's of players, who considered as modpack creator.\n" +
-                        "Only this players can overwrite modlist.json",
+                        "Only this players can overwrite modlist.json\n" +
+                        "If this feature is enabled and this array is empty, will be appended with UUID of current player.",
                 new ArrayList<String>());
         addOption("modpack_modlist.auto_update",
                 "If enabled, modlist.json will be overwritten on every launch(mod loading),\n" +
                         "then game is launched by modpack creator.\n" +
                         "So you won't forget to save it before publishing.",
                 true);
+        HashSet<String> toRemove = new HashSet<>();
+        config.valueMap().forEach((key, value) -> {
+            if (value instanceof AbstractCommentedConfig) {
+                ((AbstractCommentedConfig) value).valueMap().forEach((k, v) -> {
+                    String mergedKey = key + "." + k;
+                    if(!usedOptions.contains(mergedKey)) {
+                        toRemove.add(mergedKey);
+                    }
+                });
+            }
+        });
+        toRemove.forEach(key->{
+            config.remove(key);
+            LOGGER.warn("Removed config option due to it not used in config anymore: " + key);
+        });
     }
 
     private static <T> void addOption(String path, String comment, T defaultValue) {
+        usedOptions.add(path);
         config.setComment(path, comment);
         if (!config.contains(path)) {
             config.set(path, defaultValue);
@@ -168,6 +182,7 @@ public class CrashAssistantConfig {
             if (config.valueMap().hashCode() != old_values_hash || config.commentMap().hashCode() != old_comments_hash) {
                 save();
             }
+            lastConfigUpdate = CONFIG_PATH.toFile().lastModified();
         });
     }
 
