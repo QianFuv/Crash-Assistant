@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Core;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
@@ -177,6 +179,7 @@ public interface JarInJarHelper {
         return langFiles;
     }
 
+
     static HashMap<String, String> readJsonFromJar(String embeddedPath) {
         if (!embeddedPath.startsWith("/")) {
             embeddedPath = "/" + embeddedPath;
@@ -195,8 +198,9 @@ public interface JarInJarHelper {
 
                 // Преобразуем JsonObject в HashMap
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-                return new Gson().fromJson(jsonObject, HashMap.class);
+                Type mapType = new TypeToken<HashMap<String, String>>() {
+                }.getType();
+                return new Gson().fromJson(jsonObject, mapType);
             }
         } catch (Exception e) {
             LOGGER.error("Failed to read json from jar: {}", embeddedPath, e);

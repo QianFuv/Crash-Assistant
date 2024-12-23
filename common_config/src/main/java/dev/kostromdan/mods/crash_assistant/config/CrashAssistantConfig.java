@@ -127,7 +127,7 @@ public class CrashAssistantConfig {
     }
 
 
-    private static void executeWithLock(Runnable function) {
+    public static void executeWithLock(Runnable function) {
         CONFIG_PATH.getParent().toFile().mkdirs();
         CONFIG_LOCK_PATH.toFile().getParentFile().mkdirs();
         try (var lockChannel = FileChannel.open(CONFIG_LOCK_PATH, StandardOpenOption.CREATE, StandardOpenOption.WRITE);

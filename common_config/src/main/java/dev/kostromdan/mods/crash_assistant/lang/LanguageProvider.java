@@ -54,14 +54,17 @@ public class LanguageProvider {
         return CrashAssistantConfig.get("general.default_lang");
     }
 
+    @SuppressWarnings("unchecked")
     public static void unzipAndUpdateLangFiles() {
         LANG_PATH.toFile().mkdirs();
         HashSet<String> langFilesInJarNames = JarInJarHelper.getLangFilesNamesFromJar();
         HashMap<String, HashMap<String, String>> jarLangFiles = new HashMap<>();
         for (String langFile : langFilesInJarNames) {
-            if(langFile.endsWith("/")) {continue;}
+            if (langFile.endsWith("/")) {
+                continue;
+            }
             String langFileName = langFile.split("/")[1];
-            if(!langFile.endsWith(".json")) {
+            if (!langFile.endsWith(".json")) {
                 JarInJarHelper.unzipFromJar(langFile, LANG_PATH.resolve(langFileName));
                 continue;
             }
@@ -101,7 +104,9 @@ public class LanguageProvider {
                 } else outputValue = config.lang.getOrDefault(key, "$DEFAULT");
                 outputJson.put(key, outputValue);
             });
-            JarInJarHelper.writeJsonToFile(outputJson, LANG_PATH.resolve(langName + ".json"));
+            CrashAssistantConfig.executeWithLock(() -> {
+                JarInJarHelper.writeJsonToFile(outputJson, LANG_PATH.resolve(langName + ".json"));
+            });
         }
     }
 
