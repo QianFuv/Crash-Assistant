@@ -31,7 +31,6 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-    implementation project(path: ':common_loading_utils')
     implementation project(path: ':common_config')
 
     implementation 'com.electronwill.night-config:toml:3.6.4'
@@ -53,12 +52,11 @@ shadowJar {
 }
 
 remapJar {
-    dependsOn(':app:shadowJar', ':common_loading_utils:build')
+    dependsOn(':app:shadowJar')
 
     from(project(':app').tasks.shadowJar) {
         into 'META-INF/jarjar'
     }
-    from(project(':common_loading_utils').sourceSets.main.output)
     from(project(':common_config').sourceSets.main.output)
 
     input.set shadowJar.archiveFile

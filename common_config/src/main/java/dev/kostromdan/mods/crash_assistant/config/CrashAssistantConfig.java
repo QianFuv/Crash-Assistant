@@ -43,6 +43,9 @@ public class CrashAssistantConfig {
         addOption("general.kill_old_app",
                 "Close old CrashAssistantApp if it's still running when starting a new instance of Minecraft, to avoid confusing player with window from old crash.",
                 true);
+        addOption("general.default_lang",
+                "If options.txt doesn't exist, the default language is used.",
+                "en_us");
 
         ArrayList<String> defaultBlacklistedLogs = new ArrayList<>();
         defaultBlacklistedLogs.add("CrashAssistant: latest.log");

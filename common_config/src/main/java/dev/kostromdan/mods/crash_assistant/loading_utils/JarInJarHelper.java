@@ -3,26 +3,24 @@ package dev.kostromdan.mods.crash_assistant.loading_utils;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Core;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
 import java.nio.file.*;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public interface JarInJarHelper {
-    Logger LOGGER = LoggerFactory.getLogger("CrashAssistantJarInJarHelper");
+    Logger LOGGER = LogManager.getLogger("CrashAssistantJarInJarHelper");
 
     static void launchCrashAssistantApp() {
         try {
@@ -117,7 +115,7 @@ public interface JarInJarHelper {
                 }
             } else if (Files.isRegularFile(path) && fileName.endsWith(".info") && fileName.contains("_")) {
                 String processInfo = fileName.split("\\.info")[0];
-                if(!Files.exists(outputDirectory.resolve(processInfo + "_app.jar"))) {
+                if (!Files.exists(outputDirectory.resolve(processInfo + "_app.jar"))) {
                     try {
                         Files.deleteIfExists(path);
                     } catch (IOException ignored) {
@@ -126,22 +124,116 @@ public interface JarInJarHelper {
             }
         });
 
-        InputStream jarStream = JarInJarHelper.class.getResourceAsStream("/META-INF/jarjar/" + embeddedName);
-
-        if (jarStream == null) {
-            throw new FileNotFoundException("Could not find embedded JAR: " + embeddedName);
-        }
-
-        try (OutputStream out = Files.newOutputStream(extractedJarPath)) {
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = jarStream.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-        }
+        unzipFromJar("/META-INF/jarjar/" + embeddedName, extractedJarPath);
 
         return extractedJarPath;
     }
+
+    static void unzipFromJar(String embeddedPath, Path extractedPath) {
+        if (!embeddedPath.startsWith("/")) {
+            embeddedPath = "/" + embeddedPath;
+        }
+        try {
+            InputStream jarStream = JarInJarHelper.class.getResourceAsStream(embeddedPath);
+            if (jarStream == null) {
+                throw new FileNotFoundException("Could not find embedded JAR: " + embeddedPath);
+            }
+
+            try (OutputStream out = Files.newOutputStream(extractedPath)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = jarStream.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to unzip file from jar", e);
+        }
+    }
+
+    static HashSet<String> getLangFilesNamesFromJar() {
+        HashSet<String> langFiles = new HashSet<>();
+
+        try {
+            File jarFile = new File(LanguageProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+            if (jarFile.isFile()) {
+                try (JarFile jar = new JarFile(jarFile)) {
+                    Enumeration<JarEntry> entries = jar.entries();
+
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
+                        String entryName = entry.getName();
+
+                        if (entryName.startsWith("lang/")) {
+                            langFiles.add(entryName);
+                        }
+                    }
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.error("Failed to list language files in JAR: ", e);
+        }
+        return langFiles;
+    }
+
+    static HashMap<String, String> readJsonFromJar(String embeddedPath) {
+        if (!embeddedPath.startsWith("/")) {
+            embeddedPath = "/" + embeddedPath;
+        }
+
+        try (InputStream jarStream = JarInJarHelper.class.getResourceAsStream(embeddedPath)) {
+            if (jarStream == null) {
+                throw new FileNotFoundException("Could not find embedded JAR: " + embeddedPath);
+            }
+
+            try (InputStreamReader reader = new InputStreamReader(jarStream)) {
+                JsonElement jsonElement = JsonParser.parseReader(reader);
+                if (jsonElement == null || !jsonElement.isJsonObject()) {
+                    throw new IllegalStateException("JSON content is not a valid JSON object.");
+                }
+
+                // Преобразуем JsonObject в HashMap
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+                return new Gson().fromJson(jsonObject, HashMap.class);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to read json from jar: {}", embeddedPath, e);
+            return new HashMap<>();
+        }
+    }
+
+    static HashMap<String, String> readJsonFromFile(Path path) {
+        try {
+            try (Reader reader = Files.newBufferedReader(path)) {
+                return convertJsonToMap(JsonParser.parseReader(reader).getAsJsonObject());
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to read json from file", e);
+        }
+        return new HashMap<>();
+    }
+
+    static void writeJsonToFile(Map<String, String> json, Path path) {
+        try {
+            try (FileWriter writer = new FileWriter(path.toFile())) {
+                Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+                GSON.toJson(json, writer);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error while saving json", e);
+        }
+    }
+
+    static HashMap<String, String> convertJsonToMap(JsonObject json) {
+        HashMap<String, String> values = new HashMap<>();
+        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+            values.put(entry.getKey(), entry.getValue().getAsString());
+        }
+        return values;
+    }
+
 
     static Path getJarInJar(String name) throws IOException, URISyntaxException {
         //Idea taken from org.sinytra.connector.locator.EmbeddedDependencies#getJarInJar
