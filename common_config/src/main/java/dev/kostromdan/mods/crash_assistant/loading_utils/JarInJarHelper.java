@@ -187,6 +187,15 @@ public interface JarInJarHelper {
             try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 return convertJsonToMap(JsonParser.parseReader(reader).getAsJsonObject());
             }
+        } catch (JsonSyntaxException e) {
+            LOGGER.error("Failed to read corrupted json from file '{}'. Renaming to .bak", path, e);
+            String fileName = path.getFileName().toString();
+            try {
+                path.toFile().renameTo(Paths.get(path.getParent().toString(), fileName + ".bak").toFile());
+            } catch (Exception e1) {
+                LOGGER.error("Failed to rename '" + fileName + "' to '" + fileName + ".bak': ", e1);
+            }
+
         } catch (Exception e) {
             LOGGER.error("Failed to read json from file " + path.toString(), e);
         }
