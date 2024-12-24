@@ -17,12 +17,12 @@ public final class CrashAssistant {
 
     public static void init() {
         if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
-            playerUUID = Minecraft.getInstance().getUser().getUuid();
+            playerUUID = Minecraft.getInstance().getUser().getName();
 
             if (CrashAssistantConfig.getModpackCreators().isEmpty()) {
                 CrashAssistantConfig.addModpackCreator(playerUUID);
             }
-            if ((Boolean) CrashAssistantConfig.get("modpack_modlist.auto_update") &&
+            if ((boolean) CrashAssistantConfig.get("modpack_modlist.auto_update") &&
                     CrashAssistantConfig.getModpackCreators().contains(playerUUID)) {
                 ModListUtils.saveCurrentModList();
             }

@@ -10,8 +10,6 @@ import dev.kostromdan.mods.crash_assistant.mod_list.ModListDiff;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -29,7 +27,7 @@ public class CrashAssistantCommands {
     }
 
     public static Component getCopyUUIDComponent(String playerUUID) {
-        return Component.literal("[UUID]")
+        return Component.literal("[nick]")
                 .withStyle(style -> style
                         .withColor(ChatFormatting.YELLOW)
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, '"' + playerUUID + '"'))
@@ -50,6 +48,10 @@ public class CrashAssistantCommands {
         );
     }
 
+    public static void sendClientMsg(Component message) {
+        Minecraft.getInstance().gui.getChat().addMessage(message);
+    }
+
     public static boolean checkModlistFeatureEnabled() {
         LanguageProvider.updateLang();
         if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
@@ -59,13 +61,12 @@ public class CrashAssistantCommands {
         msg.append(Component.literal(LanguageProvider.get("commands.modlist_disabled_error_msg")));
         msg.append(getModConfigComponent());
         msg.withStyle(ChatFormatting.RED);
-        Minecraft.getInstance().player.sendSystemMessage(msg);
+
+        sendClientMsg(msg);
         return false;
     }
 
-    public static int saveModlist(CommandContext<CommandSourceStack> context) {
-        LocalPlayer player = Minecraft.getInstance().player;
-
+    public static int saveModlist(CommandContext<?> context) {
         if (!checkModlistFeatureEnabled()) {
             return 0;
         }
@@ -92,12 +93,11 @@ public class CrashAssistantCommands {
             msg.withStyle(ChatFormatting.RED);
         }
 
-        player.sendSystemMessage(msg);
+        sendClientMsg(msg);
         return 0;
     }
 
-    public static int showDiff(CommandContext<CommandSourceStack> context) {
-        LocalPlayer player = Minecraft.getInstance().player;
+    public static int showDiff(CommandContext<?> context) {
         MutableComponent msg = Component.empty();
 
         if (!checkModlistFeatureEnabled()) {
@@ -121,7 +121,7 @@ public class CrashAssistantCommands {
             msg.append(Component.literal(LanguageProvider.get("commands.removed_mods_not_found")).withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
         }
 
-        player.sendSystemMessage(msg);
+        sendClientMsg(msg);
         return 0;
     }
 }

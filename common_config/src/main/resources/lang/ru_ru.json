@@ -20,7 +20,7 @@
   "gui.failed_to_upload_file": "Не удалось загрузить файл",
   "gui.browser_button_tooltip": "Открыть ссылку в браузере",
   "commands.mod_config_tooltip": "Нажмите, чтобы открыть конфиг",
-  "commands.uuid_tooltip": "Нажмите, чтобы скопировать UUID",
+  "commands.uuid_tooltip": "Нажмите, чтобы скопировать ник",
   "commands.modlist_disabled_error_msg": "Функция 'modpack_modlist' отключена! Вы можете включить её в ",
   "commands.modlist_overwritten_success": "Список модов успешно перезаписан!\n",
   "commands.modlist_auto_update_msg": "На самом деле, вам не нужно выполнять эту команду, так как функция автообновления включена в ",
