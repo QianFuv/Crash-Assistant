@@ -170,7 +170,6 @@ public interface JarInJarHelper {
                     throw new IllegalStateException("JSON content is not a valid JSON object.");
                 }
 
-                // Преобразуем JsonObject в HashMap
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
                 Type mapType = new TypeToken<HashMap<String, String>>() {
                 }.getType();
