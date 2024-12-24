@@ -1,3 +1,9 @@
+1.2.1:
+- Added Chinese lang.
+- Added corrupted lang files handling.
+- Expanded fabric version range 1.19.2 - 1.21.4.
+- Small fixes.
+
 1.2.0a:
 - Localisation
 - Bugfix
