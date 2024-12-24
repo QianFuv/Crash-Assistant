@@ -7,7 +7,7 @@
   "gui.show_in_explorer_button": "在文件资源管理器中显示",
   "gui.upload_and_copy_link_button": "   上传并复制链接   ",
   "gui.show_modlist_diff_button": "显示模组列表差异",
-  "gui.modlist_not_changed_label": "整合包模组列表没有被更改：",
+  "gui.modlist_not_changed_label": "整合包模组列表没有被更改",
   "gui.modlist_changed_label": "检测到 $ADDED_MODS_COUNT$ 个模组被添加，$REMOVED_MODS_COUNT$ 个模组被删除：",
   "gui.modlist_diff_dialog_name": "模组列表差异",
   "gui.copy_link_button": "复制链接",

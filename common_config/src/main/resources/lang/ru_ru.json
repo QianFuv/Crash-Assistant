@@ -7,7 +7,7 @@
   "gui.show_in_explorer_button": "показать в проводнике",
   "gui.upload_and_copy_link_button": "загрузить и скопировать ссылку",
   "gui.show_modlist_diff_button": "показать различия в списке модов",
-  "gui.modlist_not_changed_label": "Список модов не был изменён:",
+  "gui.modlist_not_changed_label": "Список модов не был изменён",
   "gui.modlist_changed_label": "Обнаружено $ADDED_MODS_COUNT$ добавленных модов, $REMOVED_MODS_COUNT$ удалённых модов:",
   "gui.modlist_diff_dialog_name": "Различия в модах",
   "gui.copy_link_button": "скопировать ссылку",

@@ -32,9 +32,9 @@ public class ControlPanel {
             String labelMsg;
             JButton showModListButton = new JButton(LanguageProvider.get("gui.show_modlist_diff_button"));
             if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
-                labelMsg = LanguageProvider.get("gui.modlist_not_changed_label");
+                labelMsg = LanguageProvider.get("gui.modlist_not_changed_label") + ":";
                 showModListButton.setEnabled(false);
-                showModListButton.setToolTipText(labelMsg);
+                showModListButton.setToolTipText(LanguageProvider.get("gui.modlist_not_changed_label"));
             } else {
                 labelMsg = "<html><div style='white-space:nowrap;'>"
                         + LanguageProvider.get("gui.modlist_changed_label")

@@ -8,7 +8,7 @@
   "gui.show_in_explorer_button": "show in explorer",
   "gui.upload_and_copy_link_button": "upload and copy link",
   "gui.show_modlist_diff_button": "show modlist diff",
-  "gui.modlist_not_changed_label": "Modpack modlist wasn't changed:",
+  "gui.modlist_not_changed_label": "Modpack modlist wasn't changed",
   "gui.modlist_changed_label": "Detected $ADDED_MODS_COUNT$ mods added, $REMOVED_MODS_COUNT$ mods removed:",
   "gui.modlist_diff_dialog_name": "Mod List Diff",
   "gui.copy_link_button": "copy link",
