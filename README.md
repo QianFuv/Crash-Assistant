@@ -9,6 +9,8 @@ Use gradle `build` task of root project. Compiled jars can be found in: `build\l
 * `crash_assistant-fabric-<version>.jar)` fabric mod.
 * `crash_assistant-forge-<version>.jar)` forge mod.
 
+For localization go [lang](common_config/src/main/resources/lang)
+
 ## Project structure:
 `\app` has code of gui app
 
@@ -19,9 +21,7 @@ Use gradle `build` task of root project. Compiled jars can be found in: `build\l
 
 `\common` has code for fabric and forge mods shared code.
 
-`\common_config` has code for `app`, `fabric`, `forge_coremod` shared code used for runtime config.
-
-`\common_loading_utils` has code for `fabric` and `forge_coremod` shared code used for launching gui app.
+`\common_config` has code for `app`, `fabric`, `forge_coremod` shared code used for runtime config, lang, launching gui app.
 
 `\forge_coremod` has code of forge coremod from which `forge` mod and `app` launched.
 
