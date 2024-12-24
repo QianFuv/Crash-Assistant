@@ -1,3 +1,7 @@
+1.2.0a:
+- Localisation
+- Bugfix
+
 1.1.1:
 - Fixed some options didn't support Chinese.
 - Small fixes.
