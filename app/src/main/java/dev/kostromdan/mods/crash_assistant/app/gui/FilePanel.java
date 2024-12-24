@@ -37,7 +37,7 @@ public class FilePanel {
         panel.add(fileNameLabel, BorderLayout.CENTER);
 
         JPanel spacerPanel = new JPanel();
-        spacerPanel.setPreferredSize(new Dimension(10, 0));
+        spacerPanel.setPreferredSize(new Dimension(0, 0));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
@@ -48,7 +48,7 @@ public class FilePanel {
 
         browserButton = createButton("\uD83C\uDF10", e -> openInBrowser());
         browserButton.setVisible(false);
-        browserButton.setToolTipText("Open link in browser");
+        browserButton.setToolTipText(LanguageProvider.get("gui.browser_button_tooltip"));
 
 
         buttonPanel.add(spacerPanel);
@@ -151,12 +151,12 @@ public class FilePanel {
                     {
                         lastError = e;
                         CrashAssistantApp.LOGGER.info("Failed to upload file \"" + filePath + "\": ", e);
-                        uploadButton.setText("Error!");
+                        uploadButton.setText(LanguageProvider.get("gui.error"));
                         if (fromButton) {
                             JOptionPane.showMessageDialog(
                                     panel,
-                                    "Failed to upload file \"" + filePath + "\": " + e,
-                                    "Failed to upload file!",
+                                    LanguageProvider.get("gui.failed_to_upload_file") + " \"" + filePath + "\": " + e,
+                                    LanguageProvider.get("gui.failed_to_upload_file") + "!",
                                     JOptionPane.ERROR_MESSAGE
                             );
                         }

@@ -89,7 +89,7 @@ public class ControlPanel {
     }
 
     private void showModList() {
-        JOptionPane.showMessageDialog(null, ModListUtils.generateDiffMsg(), "Mod List DIff", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, ModListUtils.generateDiffMsg(), LanguageProvider.get("gui.modlist_diff_dialog_name"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void uploadAllFiles() {
@@ -111,7 +111,7 @@ public class ControlPanel {
                                     "Failed to upload file!",
                                     JOptionPane.ERROR_MESSAGE
                             );
-                            uploadAllButton.setText("Error!");
+                            uploadAllButton.setText(LanguageProvider.get("gui.error"));
                             new java.util.Timer().schedule(
                                     new java.util.TimerTask() {
                                         @Override
@@ -138,7 +138,7 @@ public class ControlPanel {
 
                     }
                 }
-                generatedMsg = LanguageProvider.get("gui.msg_init_text") + "\n";
+                generatedMsg = CrashAssistantConfig.get("text.modpack_name") + " crashed!\n";
                 for (FilePanel panel : fileListPanel.filePanelList) {
                     generatedMsg += panel.getFileName() + ": " + panel.getUploadedLink() + "\n";
                 }

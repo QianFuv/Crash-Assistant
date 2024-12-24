@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
-import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Core;
@@ -15,11 +14,13 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.*;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public interface JarInJarHelper {
     Logger LOGGER = LogManager.getLogger("CrashAssistantJarInJarHelper");
@@ -149,36 +150,9 @@ public interface JarInJarHelper {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Failed to unzip file from jar", e);
+            LOGGER.error("Failed to unzip file from jar " + embeddedPath, e);
         }
     }
-
-    static HashSet<String> getLangFilesNamesFromJar() {
-        HashSet<String> langFiles = new HashSet<>();
-
-        try {
-            File jarFile = new File(LanguageProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
-            if (jarFile.isFile()) {
-                try (JarFile jar = new JarFile(jarFile)) {
-                    Enumeration<JarEntry> entries = jar.entries();
-
-                    while (entries.hasMoreElements()) {
-                        JarEntry entry = entries.nextElement();
-                        String entryName = entry.getName();
-
-                        if (entryName.startsWith("lang/")) {
-                            langFiles.add(entryName);
-                        }
-                    }
-                }
-            }
-        } catch (IOException | URISyntaxException e) {
-            LOGGER.error("Failed to list language files in JAR: ", e);
-        }
-        return langFiles;
-    }
-
 
     static HashMap<String, String> readJsonFromJar(String embeddedPath) {
         if (!embeddedPath.startsWith("/")) {
@@ -190,7 +164,7 @@ public interface JarInJarHelper {
                 throw new FileNotFoundException("Could not find embedded JAR: " + embeddedPath);
             }
 
-            try (InputStreamReader reader = new InputStreamReader(jarStream)) {
+            try (InputStreamReader reader = new InputStreamReader(jarStream, StandardCharsets.UTF_8)) {
                 JsonElement jsonElement = JsonParser.parseReader(reader);
                 if (jsonElement == null || !jsonElement.isJsonObject()) {
                     throw new IllegalStateException("JSON content is not a valid JSON object.");
@@ -208,13 +182,14 @@ public interface JarInJarHelper {
         }
     }
 
+
     static HashMap<String, String> readJsonFromFile(Path path) {
         try {
-            try (Reader reader = Files.newBufferedReader(path)) {
+            try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 return convertJsonToMap(JsonParser.parseReader(reader).getAsJsonObject());
             }
         } catch (Exception e) {
-            LOGGER.error("Failed to read json from file", e);
+            LOGGER.error("Failed to read json from file " + path.toString(), e);
         }
         return new HashMap<>();
     }
@@ -226,7 +201,7 @@ public interface JarInJarHelper {
                 GSON.toJson(json, writer);
             }
         } catch (Exception e) {
-            LOGGER.error("Error while saving json", e);
+            LOGGER.error("Error while saving json " + path, e);
         }
     }
 

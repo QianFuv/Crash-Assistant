@@ -49,7 +49,7 @@ public class CrashAssistantConfig {
                 "Close old CrashAssistantApp if it's still running when starting a new instance of Minecraft, to avoid confusing player with window from old crash.",
                 true);
         addOption("general.default_lang",
-                "If options.txt doesn't exist, the default language is used.",
+                "If options.txt doesn't exist, the default language will be used.",
                 "en_us");
 
         ArrayList<String> defaultBlacklistedLogs = new ArrayList<>();
@@ -74,6 +74,9 @@ public class CrashAssistantConfig {
                 "$SUPPORT_NAME$ in lang files will be replaced with this value.\n" +
                         "For example this placeHolder used in: \"gui.request_help_button\": \"request help in $SUPPORT_NAME$\"",
                 "Modded Minecraft Discord");
+        addOption("text.support_place",
+                "$SUPPORT_PLACE$ in lang files will be replaced with this value.",
+                "player_help channel");
         addOption("text.modpack_name",
                 "$MODPACK_NAME$ in lang files will be replaced with this value.\n" +
                         "For example this placeHolder used in: \"gui.title_crashed_with_report\": \"Oops, $MODPACK_NAME$ crashed!\"",

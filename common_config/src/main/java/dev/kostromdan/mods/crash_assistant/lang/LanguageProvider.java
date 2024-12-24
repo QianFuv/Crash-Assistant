@@ -57,7 +57,10 @@ public class LanguageProvider {
     @SuppressWarnings("unchecked")
     public static void unzipAndUpdateLangFiles() {
         LANG_PATH.toFile().mkdirs();
-        HashSet<String> langFilesInJarNames = JarInJarHelper.getLangFilesNamesFromJar();
+        HashSet<String> langFilesInJarNames = new HashSet<>();
+        langFilesInJarNames.add("lang/en_us.json");
+        langFilesInJarNames.add("lang/ru_ru.json");
+        langFilesInJarNames.add("lang/README.md");
         HashMap<String, HashMap<String, String>> jarLangFiles = new HashMap<>();
         for (String langFile : langFilesInJarNames) {
             if (langFile.endsWith("/")) {

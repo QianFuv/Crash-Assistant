@@ -11,6 +11,7 @@ public class Lang {
     public static final HashMap<String, String> PlaceHolderToConfigMap = new HashMap<>() {{
         put("$SUPPORT_NAME$", "text.support_name");
         put("$MODPACK_NAME$", "text.modpack_name");
+        put("$SUPPORT_PLACE$", "text.support_place");
     }};
 
     public String get(String key) {
