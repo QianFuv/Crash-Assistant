@@ -9,6 +9,7 @@ import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +33,8 @@ public class CrashAssistantApp {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             LOGGER.error("Uncaught exception in \"{}\" thread:", thread.getName(), throwable);
         });
+        LOGGER.info("CrashAssistantApp running: JVM args {}", ManagementFactory.getRuntimeMXBean().getInputArguments());
+        LOGGER.info("CrashAssistantApp running: program args: [{}]", String.join(", ", args));
 
         parentPID = -1;
         for (int i = 0; i < args.length; i++) {

@@ -1,13 +1,11 @@
 package dev.kostromdan.mods.crash_assistant.app.gui;
 
 import dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp;
-import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import gs.mclo.api.MclogsClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.module.Configuration;
 import java.nio.file.Path;
 import java.util.Map;
 
