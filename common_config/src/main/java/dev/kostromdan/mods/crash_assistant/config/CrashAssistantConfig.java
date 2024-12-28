@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CrashAssistantConfig {
@@ -102,13 +101,13 @@ public class CrashAssistantConfig {
             if (value instanceof AbstractCommentedConfig) {
                 ((AbstractCommentedConfig) value).valueMap().forEach((k, v) -> {
                     String mergedKey = key + "." + k;
-                    if(!usedOptions.contains(mergedKey)) {
+                    if (!usedOptions.contains(mergedKey)) {
                         toRemove.add(mergedKey);
                     }
                 });
             }
         });
-        toRemove.forEach(key->{
+        toRemove.forEach(key -> {
             config.remove(key);
             LOGGER.warn("Removed config option due to it not used in config anymore: " + key);
         });
