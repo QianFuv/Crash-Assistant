@@ -1,7 +1,5 @@
 package dev.kostromdan.mods.crash_assistant.loading_utils;
 
-import com.electronwill.nightconfig.core.file.FileConfig;
-import com.electronwill.nightconfig.toml.TomlFormat;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
@@ -49,9 +47,7 @@ public interface JarInJarHelper {
                     "-parentPID", Objects.toString(ProcessHandle.current().pid()),
                     "-log4jApi", LibrariesJarLocator.getLibraryJarPath(LogManager.class),
                     "-log4jCore", LibrariesJarLocator.getLibraryJarPath(Core.class),
-                    "-googleGson", LibrariesJarLocator.getLibraryJarPath(Gson.class),
-                    "-nightConfigCore", LibrariesJarLocator.getLibraryJarPath(FileConfig.class),
-                    "-nightConfigToml", LibrariesJarLocator.getLibraryJarPath(TomlFormat.class)
+                    "-googleGson", LibrariesJarLocator.getLibraryJarPath(Gson.class)
             );
             Process crashAssistantAppProcess = crashAssistantAppProcessBuilder.start();
             Path currentProcessDataPath = Paths.get("local", "crash_assistant", currentProcessData + ".info");

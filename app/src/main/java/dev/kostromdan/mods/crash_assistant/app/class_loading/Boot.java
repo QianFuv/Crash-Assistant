@@ -21,10 +21,6 @@ public class Boot {
                 log4jCore = args[i + 1];
             } else if ("-googleGson".equals(args[i]) && i + 1 < args.length) {
                 googleGson = args[i + 1];
-            } else if ("-nightConfigCore".equals(args[i]) && i + 1 < args.length) {
-                nightConfigCore = args[i + 1];
-            } else if ("-nightConfigToml".equals(args[i]) && i + 1 < args.length) {
-                nightConfigToml = args[i + 1];
             }
         }
 
@@ -38,8 +34,6 @@ public class Boot {
         CrashAssistantAgent.appendJarFile(log4jApi);
         CrashAssistantAgent.appendJarFile(log4jCore);
         CrashAssistantAgent.appendJarFile(googleGson);
-        CrashAssistantAgent.appendJarFile(nightConfigCore);
-        CrashAssistantAgent.appendJarFile(nightConfigToml);
 
         Class<?> crashAssistantAppClass = Class.forName("dev.kostromdan.mods.crash_assistant.app.CrashAssistantApp");
         Method mainMethod = crashAssistantAppClass.getMethod("main", String[].class);
@@ -56,12 +50,6 @@ public class Boot {
         }
         if (googleGson == null) {
             missingParameters.add("-googleGson");
-        }
-        if (nightConfigCore == null) {
-            missingParameters.add("-nightConfigCore");
-        }
-        if (nightConfigToml == null) {
-            missingParameters.add("-nightConfigToml");
         }
         return missingParameters;
     }

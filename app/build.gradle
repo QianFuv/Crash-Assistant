@@ -35,7 +35,6 @@ shadowJar {
     archiveClassifier.set('')
     dependencies {
         exclude(dependency('org.apache.logging.log4j:.*'))
-        exclude(dependency('com.electronwill.night-config:.*'))
         exclude(dependency('com.google.code.gson:.*'))
     }
 }
