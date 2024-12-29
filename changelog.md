@@ -1,3 +1,8 @@
+1.2.2:
+- Fixed critical issue making mod incompatible with very many fabric mods using night-config.
+- Added '/crash_assistant crash' command for debug.
+- Many fixes.
+
 1.2.1:
 - Added Chinese lang.
 - Added corrupted lang files handling.
