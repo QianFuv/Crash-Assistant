@@ -21,7 +21,7 @@
   "gui.failed_to_upload_file": "Failed to upload file",
   "gui.browser_button_tooltip": "Open link in browser",
   "commands.mod_config_tooltip": "Click to open config",
-  "commands.uuid_tooltip": "Click to copy nick",
+  "commands.nickname_tooltip": "Click to copy nick",
   "commands.modlist_disabled_error_msg": "Modlist feature is disabled! You can enable it in ",
   "commands.modlist_overwritten_success": "Modpack modlist overwritten successfully!\n",
   "commands.modlist_auto_update_msg": "You actually don't need to perform this command, since auto update feature is enabled in ",
@@ -31,5 +31,9 @@
   "commands.added_mods_header": "Added mods: \n",
   "commands.added_mods_not_found": "Added mods not found!",
   "commands.removed_mods_header": "Removed mods: \n",
-  "commands.removed_mods_not_found": "Removed mods not found!"
+  "commands.removed_mods_not_found": "Removed mods not found!",
+  "commands.crash_command_disabled": "This command is disabled in ",
+  "commands.crash_command_1": "If you really want to crash ",
+  "commands.crash_command_2": ", run this command again within ",
+  "commands.crash_command_3": " seconds!"
 }

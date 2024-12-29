@@ -60,7 +60,7 @@ public class CrashAssistantConfig {
         config.setComment("debug", "Here you can configure debug options for easier configuration of the mod.");
         addOption("debug.crash_game_on_event",
                 "Setting this value to one of listed here, will crash the game in order to show/debug gui.\n" +
-                        "NONE - default value, no crash. You can always crash game by holding vanilla F3+C keybind.\n" +
+                        "NONE - default value, no crash. You can always crash game by holding vanilla F3+C keybind or '/crash_assistant crash' command\n" +
                         "MIXIN_SETUP - will crash game on Mixin setup. Crash report not generated.\n" +
                         "MOD_LOADING - will crash game on load of this mod. Can be used to show FML error screen. Crash report generated.\n" +
                         "GAME_STARTED - will crash game on first tick of TitleScreen. Crash report generated.",
@@ -87,15 +87,26 @@ public class CrashAssistantConfig {
                 "Enable feature.",
                 true);
         addOption("modpack_modlist.modpack_creators",
-                "UUID's of players, who considered as modpack creator.\n" +
+                "nicknames of players, who considered as modpack creator.\n" +
                         "Only this players can overwrite modlist.json\n" +
-                        "If this feature is enabled and this array is empty, will be appended with UUID of current player.",
+                        "If this feature is enabled and this array is empty, will be appended with nickname of current player.",
                 new ArrayList<String>());
         addOption("modpack_modlist.auto_update",
                 "If enabled, modlist.json will be overwritten on every launch(mod loading),\n" +
                         "then game is launched by modpack creator.\n" +
                         "So you won't forget to save it before publishing.",
                 true);
+
+        config.setComment("crash_command", "Settings of '/crash_assistant crash' command feature.");
+        addOption("crash_command.enabled",
+                "Enable feature.",
+                true);
+        addOption("crash_command.seconds",
+                "To ensure the user really wants to crash the game, the command needs to be run again within this amount of seconds.\n" +
+                        "Set to <= 0 to disable the confirmation.",
+                10);
+
+
         HashSet<String> toRemove = new HashSet<>();
         config.valueMap().forEach((key, value) -> {
             if (value instanceof AbstractCommentedConfig) {
@@ -132,9 +143,9 @@ public class CrashAssistantConfig {
         return get("modpack_modlist.modpack_creators");
     }
 
-    public static void addModpackCreator(String UUID) {
+    public static void addModpackCreator(String nickname) {
         ArrayList<String> currentModpackCreators = getModpackCreators();
-        currentModpackCreators.add(UUID);
+        currentModpackCreators.add(nickname);
         set("modpack_modlist.modpack_creators", currentModpackCreators);
     }
 

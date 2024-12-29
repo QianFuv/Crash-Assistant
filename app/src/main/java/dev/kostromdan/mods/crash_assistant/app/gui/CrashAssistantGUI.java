@@ -61,6 +61,19 @@ public class CrashAssistantGUI {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        toFront();
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        toFront();
+                    }
+                },
+                2500
+        );
+    }
+
+    public void toFront() {
         frame.toFront();
         frame.requestFocus();
     }

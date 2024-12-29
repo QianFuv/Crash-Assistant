@@ -10,6 +10,6 @@ public interface ManualCrashThrower {
         CrashReport crashreport = new CrashReport(msg, new Throwable(msg));
         CrashReportCategory crashreportcategory = crashreport.addCategory("Crash Assistant debug crash details");
         NativeModuleLister.addCrashSection(crashreportcategory);
-        throw new ReportedException(crashreport);
+        throw new Error(new ReportedException(crashreport));
     }
 }

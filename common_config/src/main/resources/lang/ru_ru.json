@@ -20,7 +20,7 @@
   "gui.failed_to_upload_file": "Не удалось загрузить файл",
   "gui.browser_button_tooltip": "Открыть ссылку в браузере",
   "commands.mod_config_tooltip": "Нажмите, чтобы открыть конфиг",
-  "commands.uuid_tooltip": "Нажмите, чтобы скопировать ник",
+  "commands.nickname_tooltip": "Нажмите, чтобы скопировать ник",
   "commands.modlist_disabled_error_msg": "Функция 'modpack_modlist' отключена! Вы можете включить её в ",
   "commands.modlist_overwritten_success": "Список модов успешно перезаписан!\n",
   "commands.modlist_auto_update_msg": "На самом деле, вам не нужно выполнять эту команду, так как функция автообновления включена в ",
@@ -30,5 +30,10 @@
   "commands.added_mods_header": "Добавленные моды: \n",
   "commands.added_mods_not_found": "Добавленные моды не найдены!",
   "commands.removed_mods_header": "Удалённые моды: \n",
-  "commands.removed_mods_not_found": "Удалённые моды не найдены!"
+  "commands.removed_mods_not_found": "Удалённые моды не найдены!",
+  "commands.crash_command_disabled": "Данная команда отключена в ",
+  "commands.crash_command_1": "Если ты действительно хочешь крашнуть ",
+  "commands.crash_command_2": ", выполни эту команду снова в течение ",
+  "commands.crash_command_3": " секунд!"
+
 }
