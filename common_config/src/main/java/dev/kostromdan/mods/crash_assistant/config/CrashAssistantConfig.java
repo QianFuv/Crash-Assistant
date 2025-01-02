@@ -67,7 +67,7 @@ public class CrashAssistantConfig {
                 "NONE");
 
         config.setComment("text", "Here you can change text of lang placeHolders.\n" +
-                "You can change any text in lang files.\n" +
+                "Also you can change any text in lang files.\n" +
                 "You don't need to modify jar. You can change it in config/crash_assistant/lang. For more info read README.md file located where.");
         addOption("text.support_name",
                 "$SUPPORT_NAME$ in lang files will be replaced with this value.\n" +
@@ -82,7 +82,8 @@ public class CrashAssistantConfig {
                 "Minecraft");
 
         config.setComment("modpack_modlist", "Settings of modlist feature.\n" +
-                "Adds in generated msg block about which mods modpack user added/removed/updated.");
+                "Adds in generated msg block about which mods modpack user added/removed/updated.\n" +
+                "Also you can see diff by running '/crash_assistant modlist diff' command.");
         addOption("modpack_modlist.enabled",
                 "Enable feature.",
                 true);
@@ -92,9 +93,10 @@ public class CrashAssistantConfig {
                         "If this feature is enabled and this array is empty, will be appended with nickname of current player.",
                 new ArrayList<String>());
         addOption("modpack_modlist.auto_update",
-                "If enabled, modlist.json will be overwritten on every launch(mod loading),\n" +
+                "If enabled, modlist.json will be overwritten on every launch(first tick of TitleScreen),\n" +
                         "then game is launched by modpack creator.\n" +
-                        "So you won't forget to save it before publishing.",
+                        "So you won't forget to save it before publishing.\n" +
+                        "If you want to save manually: disable this and use '/crash_assistant modlist save' command.",
                 true);
 
         config.setComment("crash_command", "Settings of '/crash_assistant crash' command feature.");

@@ -1,8 +1,6 @@
 package dev.kostromdan.mods.crash_assistant.commands;
 
 import com.mojang.blaze3d.Blaze3D;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import dev.kostromdan.mods.crash_assistant.CrashAssistant;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
@@ -12,18 +10,23 @@ import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class CrashAssistantCommands {
     public static Instant lastCrashCommand = Instant.ofEpochMilli(0);
     public static boolean crashCommandEnabled = CrashAssistantConfig.get("crash_command.enabled");
+    public static final HashSet<String> supportedCrashArgs = new HashSet<>() {{
+        add("--withThreadDump");
+        add("--withHeapDump");
+        add("--GCBeforeHeapDump");
+    }};
 
     public static Component getModConfigComponent() {
         return Component.literal("[mod config]")
@@ -41,25 +44,6 @@ public class CrashAssistantCommands {
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, '"' + playerNickname + '"'))
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(LanguageProvider.get("commands.nickname_tooltip"))))
                 );
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> void register(CommandDispatcher<T> dispatcher) {
-        dispatcher.register((LiteralArgumentBuilder<T>) Commands.literal("crash_assistant")
-                .then(Commands.literal("modlist")
-                        .then(Commands.literal("save")
-                                .executes(CrashAssistantCommands::saveModlist)
-                        ).then(Commands.literal("diff")
-                                .executes(CrashAssistantCommands::showDiff)
-                        )
-                ).then(Commands.literal("crash")
-                        .then(Commands.literal("game")
-                                .executes(CrashAssistantCommands::crashClient)
-                        ).then(Commands.literal("jwm")
-                                .executes(CrashAssistantCommands::crashJVM)
-                        ).executes(CrashAssistantCommands::crashClient)
-                )
-        );
     }
 
     public static void sendClientMsg(Component message) {
@@ -139,17 +123,7 @@ public class CrashAssistantCommands {
         return 0;
     }
 
-    public static int crashClient(CommandContext<?> context) {
-        crash("Minecraft");
-        return 0;
-    }
-
-    public static int crashJVM(CommandContext<?> context) {
-        crash("JVM");
-        return 0;
-    }
-
-    public static void crash(String toCrash) {
+    public static int crash(String toCrash, HashSet<String> args) {
         LanguageProvider.updateLang();
         MutableComponent msg = Component.empty();
         if (!(boolean) CrashAssistantConfig.get("crash_command.enabled")) {
@@ -157,18 +131,18 @@ public class CrashAssistantCommands {
             msg.append(getModConfigComponent());
             msg.withStyle(style -> style.withColor(ChatFormatting.RED));
             sendClientMsg(msg);
-            return;
+            return 0;
         }
 
         int secondsToCrash = CrashAssistantConfig.get("crash_command.seconds");
-        if (secondsToCrash <= 0 || Instant.now().isBefore(lastCrashCommand.plusSeconds(secondsToCrash))) {
+        if (secondsToCrash <= 0 || Instant.now().isBefore(lastCrashCommand.plusSeconds(secondsToCrash)) || Objects.equals(toCrash, "noCrash")) {
             if (Objects.equals(toCrash, "Minecraft")) {
                 ManualCrashThrower.crashGame("Minecraft crashed by '/crash_assistant crash' command.");
             } else if (Objects.equals(toCrash, "JVM")) {
                 CrashAssistant.LOGGER.error("JVM crashed by '/crash_assistant crash jvm' command.");
                 Blaze3D.youJustLostTheGame();
             }
-            return;
+            return 0;
         }
         lastCrashCommand = Instant.now();
 
@@ -179,5 +153,6 @@ public class CrashAssistantCommands {
         msg.append(Component.literal(LanguageProvider.get("commands.crash_command_3")));
         msg.withStyle(style -> style.withColor(ChatFormatting.RED));
         sendClientMsg(msg);
+        return 0;
     }
 }

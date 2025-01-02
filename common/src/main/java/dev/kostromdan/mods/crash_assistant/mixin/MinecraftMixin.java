@@ -1,6 +1,8 @@
 package dev.kostromdan.mods.crash_assistant.mixin;
 
+import dev.kostromdan.mods.crash_assistant.CrashAssistant;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
+import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
 import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +34,15 @@ public class MinecraftMixin {
         Path normalStopFilePath = Paths.get("local", "crash_assistant", normalStopFileName);
         try {
             Files.write(normalStopFilePath, Long.toString(System.currentTimeMillis()).getBytes());
+        } catch (IOException ignored) {
+        }
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"), cancellable = false)
+    private void afterInit(CallbackInfo ci) {
+        CrashAssistant.playerNickname = Minecraft.getInstance().getUser().getName();
+        try {
+            Files.write(ModListUtils.USERNAME_FILE, CrashAssistant.playerNickname.getBytes());
         } catch (IOException ignored) {
         }
     }

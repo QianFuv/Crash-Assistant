@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class ModListUtils {
 
     private static final Path MODS_FOLDER = Paths.get("mods");
     private static final Path JSON_FILE = Paths.get("config", "crash_assistant", "modlist.json");
+    public static final Path USERNAME_FILE = Paths.get("local", "crash_assistant", "username.info");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static HashSet<String> getCurrentModList() {
@@ -84,7 +86,21 @@ public class ModListUtils {
         String generatedMsg = "";
         if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
             ModListDiff diff = ModListUtils.getDiff();
-            generatedMsg += "Modlist changes beyond the modpack:\n";
+
+            String currentUsername = "";
+            if (Files.exists(USERNAME_FILE)) {
+                try {
+                    currentUsername = new String(Files.readAllBytes(USERNAME_FILE));
+                } catch (Exception ignored) {
+                }
+            }
+            List<String> modpackCreators = CrashAssistantConfig.getModpackCreators();
+            if(modpackCreators.contains(currentUsername) || modpackCreators.isEmpty()) {
+                generatedMsg += "Modlist changes beyond the latest successful launch:\n";
+            }else {
+                generatedMsg += "Modlist changes beyond the modpack:\n";
+            }
+
             if (diff.addedMods().isEmpty() && diff.removedMods().isEmpty()) {
                 generatedMsg += "Modpack modlist wasn't modified.\n";
             } else {

@@ -16,17 +16,6 @@ public final class CrashAssistant {
     public static String playerNickname;
 
     public static void init() {
-        if (CrashAssistantConfig.get("modpack_modlist.enabled")) {
-            playerNickname = Minecraft.getInstance().getUser().getName();
-
-            if (CrashAssistantConfig.getModpackCreators().isEmpty()) {
-                CrashAssistantConfig.addModpackCreator(playerNickname);
-            }
-            if ((boolean) CrashAssistantConfig.get("modpack_modlist.auto_update") &&
-                    CrashAssistantConfig.getModpackCreators().contains(playerNickname)) {
-                ModListUtils.saveCurrentModList();
-            }
-        }
         if (Objects.equals(CrashAssistantConfig.get("debug.crash_game_on_event").toString(), "MOD_LOADING")) {
             ManualCrashThrower.crashGame("Debug crash from Crash Assistant mod. 'debug.crash_game_on_event' value of '" + CrashAssistantConfig.getConfigPath() + "' set to 'MOD_LOADING'.");
         }
