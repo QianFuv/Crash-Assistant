@@ -1,13 +1,22 @@
 package dev.kostromdan.mods.crash_assistant.commands;
 
 import com.mojang.blaze3d.Blaze3D;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.kostromdan.mods.crash_assistant.CrashAssistant;
 import dev.kostromdan.mods.crash_assistant.config.CrashAssistantConfig;
 import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListDiff;
 import dev.kostromdan.mods.crash_assistant.mod_list.ModListUtils;
+import dev.kostromdan.mods.crash_assistant.utils.HeapDumper;
 import dev.kostromdan.mods.crash_assistant.utils.ManualCrashThrower;
+import dev.kostromdan.mods.crash_assistant.utils.ThreadDumper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ClickEvent;
@@ -16,17 +25,40 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class CrashAssistantCommands {
     public static Instant lastCrashCommand = Instant.ofEpochMilli(0);
-    public static boolean crashCommandEnabled = CrashAssistantConfig.get("crash_command.enabled");
+    public static final HashMap<String, String> supportedCrashCommands = new HashMap<>() {{
+        put("game", "Minecraft");
+        put("jwm", "JVM");
+        put("no_crash", "noCrash");
+    }};
     public static final HashSet<String> supportedCrashArgs = new HashSet<>() {{
         add("--withThreadDump");
         add("--withHeapDump");
         add("--GCBeforeHeapDump");
     }};
+
+    @SuppressWarnings("unchecked")
+    public static <S> LiteralArgumentBuilder<S> getCommands() {
+        return LiteralArgumentBuilder.literal("crash_assistant")
+                .then(LiteralArgumentBuilder.literal("modlist")
+                        .then(LiteralArgumentBuilder.literal("save")
+                                .executes(CrashAssistantCommands::saveModlist)
+                        ).then(LiteralArgumentBuilder.literal("diff")
+                                .executes(CrashAssistantCommands::showDiff)
+                        )
+                ).then(LiteralArgumentBuilder.literal("crash")
+                        .requires(c -> CrashAssistantConfig.get("crash_command.enabled"))
+                        .then(RequiredArgumentBuilder.argument("to_crash", StringArgumentType.string())
+                                .suggests(new CrashAssistantCommands.CrashCommandsSuggestionProvider<>())
+                                .executes(CrashAssistantCommands::crash)
+                                .then(getCrashArg(1)
+                                        .then(getCrashArg(2)
+                                                .then(getCrashArg(3))))));
+    }
 
     public static Component getModConfigComponent() {
         return Component.literal("[mod config]")
@@ -123,19 +155,50 @@ public class CrashAssistantCommands {
         return 0;
     }
 
-    public static int crash(String toCrash, HashSet<String> args) {
+    public static int crash(CommandContext<?> context) {
         LanguageProvider.updateLang();
         MutableComponent msg = Component.empty();
-        if (!(boolean) CrashAssistantConfig.get("crash_command.enabled")) {
-            msg.append(Component.literal(LanguageProvider.get("commands.crash_command_disabled")));
-            msg.append(getModConfigComponent());
-            msg.withStyle(style -> style.withColor(ChatFormatting.RED));
-            sendClientMsg(msg);
+        String toCrash = "null";
+        try {
+            toCrash = context.getArgument("to_crash", String.class);
+            if (!supportedCrashCommands.containsKey(toCrash)) {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException ignored) {
+            sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_validation_failed_to_crash") + " '" + toCrash + "'").withStyle(style -> style.withColor(ChatFormatting.RED)));
             return 0;
         }
+        toCrash = supportedCrashCommands.get(toCrash);
 
         int secondsToCrash = CrashAssistantConfig.get("crash_command.seconds");
-        if (secondsToCrash <= 0 || Instant.now().isBefore(lastCrashCommand.plusSeconds(secondsToCrash)) || Objects.equals(toCrash, "noCrash")) {
+        boolean noCrash = Objects.equals(toCrash, "noCrash");
+        if (secondsToCrash <= 0 || Instant.now().isBefore(lastCrashCommand.plusSeconds(secondsToCrash)) || noCrash) {
+            List<String> args = parseCrashArgs(context);
+            if (!validateCrashArgs(args)) return 0;
+            if (!args.isEmpty())
+                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_applying_args")).withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
+            if (args.contains("--withThreadDump")) {
+                CrashAssistant.LOGGER.error("Detected '--withThreadDump' crash command argument. ThreadDump:\n" + ThreadDumper.obtainThreadDump());
+            }
+            if (args.contains("--withHeapDump")) {
+                if (args.contains("--GCBeforeHeapDump")) {
+                    CrashAssistant.LOGGER.error("Detected '--GCBeforeHeapDump' crash command argument. Performing garbage collection before heap dump.");
+                    System.gc();
+                }
+                CrashAssistant.LOGGER.error("Detected '--withHeapDump' crash command argument. Creating heap dump.");
+                try {
+                    CrashAssistant.LOGGER.error("Created heap dump at: " + HeapDumper.createHeapDump());
+                } catch (Exception e) {
+                    CrashAssistant.LOGGER.error("Failed to create heap dump.", e);
+                }
+            }
+
+            if (!noCrash) {
+                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_crashing")).withStyle(style -> style.withColor(ChatFormatting.RED)));
+            } else {
+                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_done")));
+            }
+
             if (Objects.equals(toCrash, "Minecraft")) {
                 ManualCrashThrower.crashGame("Minecraft crashed by '/crash_assistant crash' command.");
             } else if (Objects.equals(toCrash, "JVM")) {
@@ -154,5 +217,56 @@ public class CrashAssistantCommands {
         msg.withStyle(style -> style.withColor(ChatFormatting.RED));
         sendClientMsg(msg);
         return 0;
+    }
+
+    public static boolean validateCrashArgs(List<String> args) {
+        for (String arg : args) {
+            if (!supportedCrashArgs.contains(arg)) {
+                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_validation_failed") + " '" + arg + "'").withStyle(style -> style.withColor(ChatFormatting.RED)));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static List<String> parseCrashArgs(CommandContext<?> context) {
+        List<String> args = new ArrayList<>();
+        for (int i = 1; i <= supportedCrashArgs.size(); i++) {
+            try {
+                args.add(context.getArgument("arg" + i, String.class));
+            } catch (IllegalArgumentException ignored) {
+                break;
+            }
+        }
+        return args;
+    }
+
+    public static class CrashArgsSuggestionProvider<S> implements SuggestionProvider<S> {
+        @Override
+        public CompletableFuture<Suggestions> getSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+            List<String> existingArgs = parseCrashArgs(context);
+            for (String e : supportedCrashArgs) {
+                if (existingArgs.contains(e)) continue;
+                if (Objects.equals(e, "--GCBeforeHeapDump") && !existingArgs.contains("--withHeapDump")) continue;
+                builder.suggest(e);
+            }
+            return builder.buildFuture();
+        }
+    }
+
+    public static class CrashCommandsSuggestionProvider<S> implements SuggestionProvider<S> {
+        @Override
+        public CompletableFuture<Suggestions> getSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+            for (String crashCommand : supportedCrashCommands.keySet()) {
+                builder.suggest(crashCommand);
+            }
+            return builder.buildFuture();
+        }
+    }
+
+    public static ArgumentBuilder getCrashArg(int i) {
+        return RequiredArgumentBuilder.argument("arg" + i, StringArgumentType.string())
+                .suggests(new CrashArgsSuggestionProvider<>())
+                .executes(CrashAssistantCommands::crash);
     }
 }

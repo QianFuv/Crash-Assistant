@@ -2,7 +2,7 @@
   "gui.window_name": "Crash Assistant",
   "gui.title_crashed_with_report": "Oops, $MODPACK_NAME$ crashed!",
   "gui.title_crashed_without_report": "Oops, $MODPACK_NAME$ crashed without crash report!",
-  "gui.comment_under_title": "We regret that $MODPACK_NAME$ has crashed. Below are a few options to resolve this issue.\nYou can see the list of available logs, with according action buttons.\nIf you are unsure what to do with this, you can join the $SUPPORT_NAME$.\nSimply post generated message by the button at the bottom in $SUPPORT_PLACE$.",
+  "gui.comment_under_title": "We regret that $MODPACK_NAME$ has crashed. Below are a few options to resolve this issue.\nYou can see the list of available logs, with according action buttons.\nIf you are unsure what to do with this, you can join the $SUPPORT_NAME$.\nSimply post generated message by the button at the bottom 'upload all' in $SUPPORT_PLACE$.",
   "gui.file_list_label": "Available log files:",
   "gui.open_button": "open",
   "gui.show_in_explorer_button": "show in explorer",
@@ -35,5 +35,10 @@
   "commands.crash_command_disabled": "This command is disabled in ",
   "commands.crash_command_1": "If you really want to crash ",
   "commands.crash_command_2": ", run this command again within ",
-  "commands.crash_command_3": " seconds!"
+  "commands.crash_command_3": " seconds!",
+  "commands.crash_command_validation_failed": "Validation of command failed!\nIllegal argument:",
+  "commands.crash_command_validation_failed_to_crash": "Validation of command failed!\nIllegal crash target:",
+  "commands.crash_command_applying_args": "Applying command arguments...",
+  "commands.crash_command_crashing": "Crashing!",
+  "commands.crash_command_done": "Done!"
 }
