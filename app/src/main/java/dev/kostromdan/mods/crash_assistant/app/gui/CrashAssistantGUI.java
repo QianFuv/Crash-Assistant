@@ -54,7 +54,7 @@ public class CrashAssistantGUI {
             fileListPanel.addFile(entry.getKey(), entry.getValue());
         }
 
-        frame.setSize(Math.max(fileListPanel.getFileListPanel().getPreferredSize().width + 12, controlPanel.getPanel().getPreferredSize().width) + 26,
+        frame.setSize(Math.max(Math.max( fileListPanel.getFileListPanel().getPreferredSize().width + 12, controlPanel.getPanel().getPreferredSize().width) + 26,labelPanel.getPreferredSize().width),
                 Math.min(heightWithoutScrollPane + fileListPanel.getFileListPanel().getPreferredSize().height + 39, 700));
         frame.setMinimumSize(new Dimension(frame.getSize().width, heightWithoutScrollPane + 73));
 

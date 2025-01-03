@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 
 public final class CrashAssistantFabricClient implements ClientModInitializer {
     @Override
-    @SuppressWarnings("unchecked")
     public void onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(CrashAssistantCommands.getCommands());
