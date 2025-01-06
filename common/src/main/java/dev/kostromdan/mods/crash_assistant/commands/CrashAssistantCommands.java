@@ -79,7 +79,9 @@ public class CrashAssistantCommands {
     }
 
     public static void sendClientMsg(Component message) {
-        Minecraft.getInstance().gui.getChat().addMessage(message);
+        Minecraft.getInstance().execute(() -> {
+            Minecraft.getInstance().gui.getChat().addMessage(message);
+        });
     }
 
     public static boolean checkModlistFeatureEnabled() {
@@ -174,37 +176,46 @@ public class CrashAssistantCommands {
         boolean noCrash = Objects.equals(toCrash, "noCrash");
         if (secondsToCrash <= 0 || Instant.now().isBefore(lastCrashCommand.plusSeconds(secondsToCrash)) || noCrash) {
             List<String> args = parseCrashArgs(context);
-            if (!validateCrashArgs(args)) return 0;
-            if (!args.isEmpty())
-                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_applying_args")).withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
-            if (args.contains("--withThreadDump")) {
-                CrashAssistant.LOGGER.error("Detected '--withThreadDump' crash command argument. ThreadDump:\n" + ThreadDumper.obtainThreadDump());
-            }
-            if (args.contains("--withHeapDump")) {
-                if (args.contains("--GCBeforeHeapDump")) {
-                    CrashAssistant.LOGGER.error("Detected '--GCBeforeHeapDump' crash command argument. Performing garbage collection before heap dump.");
-                    System.gc();
+            String finalToCrash = toCrash;
+            new Thread(() -> {
+                if (!validateCrashArgs(args)) return;
+                if (!args.isEmpty()) {
+                    sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_applying_args")).withStyle(style -> style.withColor(ChatFormatting.YELLOW)));
+                    try {
+                        Thread.sleep(100); // Wait while main thread will send msg, since next operations are blocking all threads.
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-                CrashAssistant.LOGGER.error("Detected '--withHeapDump' crash command argument. Creating heap dump.");
-                try {
-                    CrashAssistant.LOGGER.error("Created heap dump at: " + HeapDumper.createHeapDump());
-                } catch (Exception e) {
-                    CrashAssistant.LOGGER.error("Failed to create heap dump.", e);
+                if (args.contains("--withThreadDump")) {
+                    CrashAssistant.LOGGER.error("Detected '--withThreadDump' crash command argument. ThreadDump:\n" + ThreadDumper.obtainThreadDump());
                 }
-            }
+                if (args.contains("--withHeapDump")) {
+                    if (args.contains("--GCBeforeHeapDump")) {
+                        CrashAssistant.LOGGER.error("Detected '--GCBeforeHeapDump' crash command argument. Performing garbage collection before heap dump.");
+                        System.gc();
+                    }
+                    CrashAssistant.LOGGER.error("Detected '--withHeapDump' crash command argument. Creating heap dump.");
+                    try {
+                        CrashAssistant.LOGGER.error("Created heap dump at: " + HeapDumper.createHeapDump());
+                    } catch (Exception e) {
+                        CrashAssistant.LOGGER.error("Failed to create heap dump.", e);
+                    }
+                }
 
-            if (!noCrash) {
-                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_crashing")).withStyle(style -> style.withColor(ChatFormatting.RED)));
-            } else {
-                sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_done")));
-            }
+                if (!noCrash) {
+                    sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_crashing")).withStyle(style -> style.withColor(ChatFormatting.RED)));
+                } else {
+                    sendClientMsg(Component.literal(LanguageProvider.get("commands.crash_command_done")));
+                }
 
-            if (Objects.equals(toCrash, "Minecraft")) {
-                ManualCrashThrower.crashGame("Minecraft crashed by '/crash_assistant crash' command.");
-            } else if (Objects.equals(toCrash, "JVM")) {
-                CrashAssistant.LOGGER.error("JVM crashed by '/crash_assistant crash jvm' command.");
-                Blaze3D.youJustLostTheGame();
-            }
+                if (Objects.equals(finalToCrash, "Minecraft")) {
+                    ManualCrashThrower.crashGame("Minecraft crashed by '/crash_assistant crash' command.");
+                } else if (Objects.equals(finalToCrash, "JVM")) {
+                    CrashAssistant.LOGGER.error("JVM crashed by '/crash_assistant crash jvm' command.");
+                    Blaze3D.youJustLostTheGame();
+                }
+            }).start();
             return 0;
         }
         lastCrashCommand = Instant.now();
