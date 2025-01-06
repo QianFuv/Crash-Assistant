@@ -23,7 +23,12 @@ import java.util.Optional;
 public interface JarInJarHelper {
     Logger LOGGER = LogManager.getLogger("CrashAssistantJarInJarHelper");
 
-    static void launchCrashAssistantApp() {
+    static void launchCrashAssistantApp(String launchTarget) {
+        if (!launchTarget.toLowerCase().contains("client")) {
+            LOGGER.error("launchTarget: " + launchTarget + ". Crash Assistant is client only mod. Remove it from server!");
+            System.exit(-1);
+        }
+        LOGGER.info("Launching CrashAssistantApp");
         try {
             ProcessHandle currentProcess = ProcessHandle.current();
             String currentProcessData = Objects.toString(currentProcess.pid()) + "_"

@@ -3,7 +3,6 @@ package dev.kostromdan.mods.crash_assistant.core_mod.services;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.ITransformer;
-import dev.kostromdan.mods.crash_assistant.lang.LanguageProvider;
 import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -20,11 +19,6 @@ import java.util.Set;
 public class CrashAssistantTransformationService implements ITransformationService {
     public static final Logger LOGGER = LoggerFactory.getLogger("CrashAssistantTransformationService");
 
-    static {
-        LOGGER.info("Launching CrashAssistantApp");
-        JarInJarHelper.launchCrashAssistantApp();
-    }
-
     @Override
     public @NotNull String name() {
         return "crash_assistant";
@@ -32,6 +26,8 @@ public class CrashAssistantTransformationService implements ITransformationServi
 
     @Override
     public void initialize(IEnvironment environment) {
+        String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("unknown");
+        JarInJarHelper.launchCrashAssistantApp(launchTarget);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dev.kostromdan.mods.crash_assistant.fabric.pre_launch;
 
 import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +11,7 @@ public class CrashAssistantPreLaunch implements PreLaunchEntrypoint {
 
     @Override
     public void onPreLaunch() {
-        LOGGER.info("Launching CrashAssistantApp");
-        JarInJarHelper.launchCrashAssistantApp();
+        String launchTarget = FabricLoader.getInstance().getEnvironmentType().toString();
+        JarInJarHelper.launchCrashAssistantApp(launchTarget);
     }
 }
