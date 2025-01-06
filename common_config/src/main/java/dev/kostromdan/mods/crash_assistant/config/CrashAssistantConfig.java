@@ -75,7 +75,7 @@ public class CrashAssistantConfig {
                 "Modded Minecraft Discord");
         addOption("text.support_place",
                 "$SUPPORT_PLACE$ in lang files will be replaced with this value.",
-                "player_help channel");
+                "#player_help channel");
         addOption("text.modpack_name",
                 "$MODPACK_NAME$ in lang files will be replaced with this value.\n" +
                         "For example this placeHolder used in: \"gui.title_crashed_with_report\": \"Oops, $MODPACK_NAME$ crashed!\"",
