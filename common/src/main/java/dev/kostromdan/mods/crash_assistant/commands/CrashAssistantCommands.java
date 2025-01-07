@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class CrashAssistantCommands {
     public static Instant lastCrashCommand = Instant.ofEpochMilli(0);
+    public static boolean isDeadLocked = false;
     public static final HashMap<String, String> supportedCrashCommands = new HashMap<>() {{
         put("game", "Minecraft");
         put("jwm", "JVM");
@@ -49,8 +50,13 @@ public class CrashAssistantCommands {
                                 .executes(CrashAssistantCommands::saveModlist)
                         ).then(LiteralArgumentBuilder.literal("diff")
                                 .executes(CrashAssistantCommands::showDiff)
-                        )
-                ).then(LiteralArgumentBuilder.literal("crash")
+                        ))
+//                .then(LiteralArgumentBuilder.literal("deadlock_integrated_server")
+//                        .then(LiteralArgumentBuilder.literal("start")
+//                                .executes(CrashAssistantCommands::deadlockIntegratedServer))
+//                        .then(LiteralArgumentBuilder.literal("release")
+//                                .executes(CrashAssistantCommands::releaseIntegratedServer)))
+                .then(LiteralArgumentBuilder.literal("crash")
                         .requires(c -> CrashAssistantConfig.get("crash_command.enabled"))
                         .then(RequiredArgumentBuilder.argument("to_crash", StringArgumentType.string())
                                 .suggests(new CrashAssistantCommands.CrashCommandsSuggestionProvider<>())
@@ -157,6 +163,25 @@ public class CrashAssistantCommands {
         return 0;
     }
 
+    private static int deadlockIntegratedServer(CommandContext<?> context) {
+        Minecraft.getInstance().getSingleplayerServer().execute(() -> {
+            isDeadLocked = true;
+            while (isDeadLocked) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        return 0;
+    }
+
+    private static int releaseIntegratedServer(CommandContext<?> context) {
+        isDeadLocked = false;
+        return 0;
+    }
+
     public static int crash(CommandContext<?> context) {
         LanguageProvider.updateLang();
         MutableComponent msg = Component.empty();
@@ -210,7 +235,10 @@ public class CrashAssistantCommands {
                 }
 
                 if (Objects.equals(finalToCrash, "Minecraft")) {
-                    ManualCrashThrower.crashGame("Minecraft crashed by '/crash_assistant crash' command.");
+                    Minecraft.getInstance().execute(() -> {
+                        // Todo: doesn't work if integrated server deadlocked.
+                        ManualCrashThrower.crashGame("Minecraft crashed by '/crash_assistant crash' command.");
+                    });
                 } else if (Objects.equals(finalToCrash, "JVM")) {
                     CrashAssistant.LOGGER.error("JVM crashed by '/crash_assistant crash jvm' command.");
                     Blaze3D.youJustLostTheGame();
