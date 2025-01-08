@@ -1,3 +1,17 @@
+1.2.3:
+- Marked fabric mod as compatible with Quilt.
+- Added args for '/crash_assistant crash' command:
+  - --withThreadDump
+  - --withHeapDump
+  - --GCBeforeHeapDump
+- Added `no_crash` for `/crash_assistant crash` command if needed just to get thread dump or heap dump without crashing.
+- Fixed incorrect width if comment label is wider than other widgets.
+- Old CrashAssistantApp logs now deleted.
+- Improved wording and grammar in en and ru lang.
+- Prevented starting dedicated server if mod is installed.
+- Improved moving to font on gui start algorithm.
+- Many small fixes.
+
 1.2.2:
 - Fixed critical issue making mod incompatible with very many fabric mods using night-config.
 - Added '/crash_assistant crash' command for debug.
