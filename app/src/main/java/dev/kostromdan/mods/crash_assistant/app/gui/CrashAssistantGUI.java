@@ -7,7 +7,11 @@ import gs.mclo.api.MclogsClient;
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
+import java.sql.Time;
+import java.time.Instant;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CrashAssistantGUI {
     public static final MclogsClient MCLogsClient = new MclogsClient("CrashAssistant");
@@ -61,21 +65,24 @@ public class CrashAssistantGUI {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        toFront();
-        new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        toFront();
-                    }
-                },
-                2500
-        );
-    }
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            final long startTime = Instant.now().toEpochMilli();
 
-    public void toFront() {
-        frame.toFront();
-        frame.requestFocus();
+            @Override
+            public void run() {
+                if (!frame.isFocused()||!frame.isVisible()|| frame.isActive()) {
+                    SwingUtilities.invokeLater(() -> {
+                        frame.setAlwaysOnTop(true);
+                        frame.toFront();
+                        frame.setAlwaysOnTop(false);
+                    });
+                }
+                if (Instant.now().toEpochMilli() - startTime > 5000) {
+                    this.cancel();
+                }
+            }
+        }, 0, 50);
     }
 }
 
