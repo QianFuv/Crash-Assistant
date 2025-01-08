@@ -1,3 +1,6 @@
+1.2.4:
+- Added "the" to upload button text in en_us lang.
+
 1.2.3:
 - Marked fabric mod as compatible with Quilt.
 - Added args for '/crash_assistant crash' command:
