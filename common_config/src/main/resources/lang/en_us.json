@@ -17,7 +17,7 @@
   "gui.uploading": "Uploading...",
   "gui.upload_all_button": "Upload all and copy message with links to all files",
   "gui.upload_all_finished_button": "Copy message with links to all files",
-  "gui.request_help_button": "Request help in $SUPPORT_NAME$",
+  "gui.request_help_button": "Request help in the $SUPPORT_NAME$",
   "gui.failed_to_upload_file": "Failed to upload file",
   "gui.browser_button_tooltip": "Open link in browser",
   "commands.mod_config_tooltip": "Click to open config",
