@@ -22,6 +22,10 @@ public class CrashAssistantDependencyLocator extends AbstractJarFileModProvider 
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
         List<IModFile> mods = new ArrayList<>();
+        if (Environment.getCurrentEnvironment() == Environment.SERVER) {
+            LOGGER.warn("Crash Assistant is client only mod. Prevented mod loading!");
+            return mods;
+        };
         try {
             mods.add(createMod(JarInJarHelper.getJarInJar("crash_assistant-forge.jar")).file());
         } catch (Exception e) {
