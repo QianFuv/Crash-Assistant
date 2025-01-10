@@ -1,6 +1,5 @@
 package dev.kostromdan.mods.crash_assistant.core_mod.services;
 
-import dev.kostromdan.mods.crash_assistant.loading_utils.Environment;
 import dev.kostromdan.mods.crash_assistant.loading_utils.JarInJarHelper;
 import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileModProvider;
 import net.minecraftforge.forgespi.locating.IDependencyLocator;
@@ -22,10 +21,6 @@ public class CrashAssistantDependencyLocator extends AbstractJarFileModProvider 
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
         List<IModFile> mods = new ArrayList<>();
-        if (Environment.getCurrentEnvironment() == Environment.SERVER) {
-            LOGGER.warn("Crash Assistant is client only mod. Prevented mod loading!");
-            return mods;
-        };
         try {
             mods.add(createMod(JarInJarHelper.getJarInJar("crash_assistant-forge.jar")).file());
         } catch (Exception e) {
