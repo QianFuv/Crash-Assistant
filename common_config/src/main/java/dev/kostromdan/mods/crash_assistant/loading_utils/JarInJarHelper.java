@@ -48,7 +48,7 @@ public interface JarInJarHelper {
                     "-XX:MinHeapFreeRatio=10",
                     "-XX:MaxGCPauseMillis=10000",
                     "-Xms8m",
-                    "-Xmx256m",
+                    "-Xmx512m",
                     "-jar", extractedJarPath.toAbsolutePath().toString(),
                     "-processJar", extractedJarPath.toAbsolutePath().toString(),
                     "-parentPID", Objects.toString(ProcessHandle.current().pid()),
