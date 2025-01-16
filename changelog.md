@@ -1,3 +1,6 @@
+1.2.14alpha:
+- Attempt to fix gui not starting on Apple.
+
 1.2.13:
 - Removed ModdedMC Discord waning since it ignored by most of the users.
 - Fixed stuck on Upload All Button press if available logs are empty.

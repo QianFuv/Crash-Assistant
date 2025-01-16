@@ -68,7 +68,7 @@ unifiedPublishing {
         displayName = tasks.remapJar.archiveFile.get().asFile.name
         version = mod_version
         changelog = file('../changelog.md').text
-        releaseType = "beta"
+        releaseType = "alpha"
 
         mainPublication tasks.remapJar
 
