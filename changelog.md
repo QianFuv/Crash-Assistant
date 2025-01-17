@@ -1,3 +1,9 @@
+1.2.14:
+- Fixed gui not starting on Apple.
+- Replaced gnome.bot -> gnomebot.dev in strings. Idk from where I took first value.
+- Added support of crafttweaker and rei logs.
+- Improved logs adding.
+
 1.2.14alpha:
 - Attempt to fix gui not starting on Apple.
 
@@ -5,8 +11,8 @@
 - Removed ModdedMC Discord waning since it ignored by most of the users.
 - Fixed stuck on Upload All Button press if available logs are empty.
 - Added in generated message information about `CurseForge: skip launcher` used.
-- Added new config option `general.upload_to`: supports `mclo.gs` / `gnome.bot`
-  - Logs still always uploaded to mclo.gs, but setting to `gnome.bot` will open log where.
+- Added new config option `general.upload_to`: supports `mclo.gs` / `gnomebot.dev`
+  - Logs still always uploaded to mclo.gs, but setting to `gnomebot.dev` will open log where.
 - Improved config.
 - Added greeting msg with suggestion to configure mod, shown one time for modpack creator, who installed the mod.
 - Small fixes.
