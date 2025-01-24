@@ -28,7 +28,7 @@ public class CrashAssistantTransformationService implements ITransformationServi
     @Override
     public void initialize(IEnvironment environment) {
         String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("unknown");
-        PlatformHelp.platform = PlatformHelp.NEOFORGE;
+        PlatformHelp.platform = PlatformHelp.FORGE;
         JarInJarHelper.launchCrashAssistantApp(launchTarget);
         JarInJarHelper.checkDuplicatedCrashAssistantMod();
     }
