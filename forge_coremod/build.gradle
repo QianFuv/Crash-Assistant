@@ -45,6 +45,10 @@ remapJar {
         }
         into 'META-INF/jarjar'
     }
+    from(zipTree(project(':forge').tasks.remapJar.archiveFile.get().asFile)) {
+        include 'META-INF/mods.toml'
+        into ''
+    }
     from(project(':common_config').sourceSets.main.output)
 
     input.set shadowJar.archiveFile
