@@ -18,6 +18,9 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
     implementation project(path: ':common_config')
+    shadowBundle project(path: ':common_config')
+    shadowBundle 'com.electronwill.night-config:toml:3.6.4'
+    shadowBundle 'com.electronwill.night-config:json:3.6.4'
 }
 
 processResources {
@@ -29,8 +32,9 @@ processResources {
 }
 
 shadowJar {
+    archiveClassifier.set('dev-shadow')
     configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
+    relocate 'com.electronwill.nightconfig', 'dev.kostromdan.mods.crash_assistant.nightconfig'
 }
 
 remapJar {
@@ -49,7 +53,6 @@ remapJar {
         include 'META-INF/mods.toml'
         into ''
     }
-    from(project(':common_config').sourceSets.main.output)
 
     input.set shadowJar.archiveFile
 }
