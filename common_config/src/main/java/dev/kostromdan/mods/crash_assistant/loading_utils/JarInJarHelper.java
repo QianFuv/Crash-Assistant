@@ -34,13 +34,8 @@ public interface JarInJarHelper {
                     + Objects.toString(currentProcess.info().startInstant().get().getEpochSecond());
             Path extractedJarPath = extractJarInJar("app.jar", currentProcessData + "_app.jar");
 
-            Optional<String> javaBinary = currentProcess.info().command();
-            if (javaBinary.isEmpty()) {
-                throw new IllegalStateException("Unable to determine the java binary path of current JVM. Crash Assistant won't work.");
-            }
-
             ProcessBuilder crashAssistantAppProcessBuilder = new ProcessBuilder(
-                    javaBinary.get(),
+                    JavaBinaryLocator.getJavaBinary(currentProcess),
                     "-XX:+UseSerialGC",
                     "-XX:MaxHeapFreeRatio=30",
                     "-XX:MinHeapFreeRatio=10",
@@ -48,6 +43,7 @@ public interface JarInJarHelper {
                     "-Xms8m",
                     "-Xmx512m",
                     "-jar", extractedJarPath.toAbsolutePath().toString(),
+                    "-jarPath", extractedJarPath.toAbsolutePath().toString(),
                     "-parentPID", Objects.toString(ProcessHandle.current().pid()),
                     "-platform", PlatformHelp.platform.toString(),
                     "-log4jApi", LibrariesJarLocator.getLibraryJarPath(LogManager.class),
@@ -55,19 +51,12 @@ public interface JarInJarHelper {
                     "-googleGson", LibrariesJarLocator.getLibraryJarPath(Gson.class),
                     "-commonIo", LibrariesJarLocator.getLibraryJarPath(ReversedLinesFileReader.class)
             );
-            Process crashAssistantAppProcess = crashAssistantAppProcessBuilder.start();
-            ChildProcessLogger.captureOutput(crashAssistantAppProcess);
-            Path currentProcessDataPath = Paths.get("local", "crash_assistant", currentProcessData + ".info");
-            try {
-                Files.write(currentProcessDataPath, Long.toString(crashAssistantAppProcess.pid()).getBytes());
-            } catch (IOException ignored) {
-            }
-
-
+            crashAssistantAppProcessBuilder.start();
         } catch (Exception e) {
             LOGGER.error("Error while launching GUI: ", e);
         }
     }
+
 
     static void checkDuplicatedCrashAssistantMod() {
         try {
